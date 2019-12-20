@@ -25,12 +25,19 @@ function init() {
 
   //Functions
 
+
+  //Creating Game
   Object.keys(shipsObj).forEach(i => {
+    const axis = Math.random() < 0.5
+    console.log(axis)
     const randomNum = Math.floor(Math.random() * (width * width))
-    console.log('running')
-    
-    squares[randomNum].classList.add(i)
-    console.log('ran')
+    shipsObj[i].forEach((item,index) => {
+      if (axis) {
+        squares[randomNum + index - 1].classList.add(i)
+      } else {
+        squares[randomNum + (index * width)].classList.add(i)
+      }
+    })
   })
 
 
