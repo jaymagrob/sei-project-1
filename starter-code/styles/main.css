@@ -27,12 +27,6 @@ div.grid-item {
   border: 1px dashed black;
 }
 
-div.grid-item.player {
-  background-image: url('../assets/pika-sprite.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-
 .carrier {
   background: red;
 }
@@ -51,4 +45,8 @@ div.grid-item.player {
 
 .destroyer {
   background: orange;
+}
+
+.border {
+  background: yellow;
 }
