@@ -50,12 +50,17 @@ function init() {
     console.log(i)
     while (!complete) {
       createLoop(i)
-       if (document.querySelectorAll('.ship').length === counter[i]) {
-         complete = true
-       } else {
-         console.log(i)
-        document.querySelectorAll('.' + i).forEach(it => it.classList.remove(i))
-       }
+      if (document.querySelectorAll('.ship').length === counter[i]) {
+        complete = true
+      } else {
+        console.log('broke')
+        document.querySelectorAll('.'+i).forEach(it => it.classList.remove(i))
+        document.querySelectorAll('.ship').forEach(it => {
+          if (it.classList.length <= 2) it.classList.remove('ship')
+        })
+        
+        
+      }
     
     }
     
