@@ -11,12 +11,15 @@ function init() {
   const gridCompetitor = document.querySelector('.grid-competitor')
   const squaresCompetitor = []
   const gridPlayer = document.querySelector('.grid-player')
-  const squaresPlayer = []
+  let squaresPlayer = []
+  const selectionPlayer = document.querySelector('.player-selection')
+  const squaresSelection = []
 
   // game variables
   const width = 10
   let freeSpaceOnBoard = false
   let complete = false
+  let playerShipSelected = ''
 
   //Game Objects
   const shipsObj = {
@@ -53,7 +56,14 @@ function init() {
     gridPlayer.appendChild(square)
   })
 
-
+  Object.keys(shipsObj).forEach(i => {
+    const square = document.createElement('div')
+    square.classList.add('select-' + i)
+    square.innerHTML = i
+    square.addEventListener('click',selectionShips)
+    squaresSelection.push(i)
+    selectionPlayer.appendChild(square)
+  })
 
   //Creating Game
   Object.keys(shipsObj).forEach(i => {
@@ -97,11 +107,33 @@ function init() {
           } 
         }
       })
-      countArray = document.querySelectorAll('.'+i).length
+      countArray = document.querySelectorAll('.' + i).length
     }
-    
-  
   }
+
+  function selectionShips(e) {
+    playerShipSelected = e.target.innerHTML.toString()
+    squaresPlayer.forEach(i => i.addEventListener('mouseenter',hoverTest))
+    squaresPlayer.forEach(i => i.addEventListener('mouseleave',hoverTest2))
+  }
+
+  function hoverTest(i) {
+    const indexPlayer = squaresPlayer.indexOf(this)
+    shipsObj[playerShipSelected].forEach((it,ind) => {
+      squaresPlayer[indexPlayer + ind].classList.add(playerShipSelected)
+    })
+    
+    //i.target.classList.add(playerShipSelected)
+    //console.log(indexPlayer)
+    //console.log(shipsObj[playerShipSelected])
+    
+    
+
+  }
+  function hoverTest2() {
+    squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
+  }
+  
   
 }
 

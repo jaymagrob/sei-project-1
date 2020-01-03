@@ -28,6 +28,10 @@ div.grid-item-competitor, div.grid-item-player {
   border: 1px dashed black;
 }
 
+.hover {
+  background: grey;
+}
+
 .carrier {
   background: red;
 }
