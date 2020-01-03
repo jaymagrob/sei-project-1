@@ -8,8 +8,10 @@ function init() {
   console.log('%cTwo', 'background: orange; color: white')
   
   // DOM variables
-  const grid = document.querySelector('.grid')
-  const squares = []
+  const gridCompetitor = document.querySelector('.grid-competitor')
+  const squaresCompetitor = []
+  const gridPlayer = document.querySelector('.grid-player')
+  const squaresPlayer = []
 
   // game variables
   const width = 10
@@ -34,12 +36,21 @@ function init() {
   }
 
   //Loop as many times as width times the width to fill the grid
+  
   Array(width * width).join('.').split('.').forEach((i,index) => {
     const square = document.createElement('div')
-    square.classList.add('grid-item')
+    square.classList.add('grid-item-competitor')
     square.innerHTML = (Math.floor(index / width)) + ' - ' + index
-    squares.push(square)
-    grid.appendChild(square)
+    squaresCompetitor.push(square)
+    gridCompetitor.appendChild(square)
+  })
+
+  Array(width * width).join('.').split('.').forEach((i,index) => {
+    const square = document.createElement('div')
+    square.classList.add('grid-item-player')
+    square.innerHTML = (Math.floor(index / width)) + ' - ' + index
+    squaresPlayer.push(square)
+    gridPlayer.appendChild(square)
   })
 
 
@@ -76,13 +87,13 @@ function init() {
         const indexVert = randomNum + (10 * index)
         if (!horizontalVert) {
           if (width - shipsObj[i].length > (randomNum % width)) {
-            squares[indexHorizontal].classList.add(i)
-            squares[indexHorizontal].classList.add('ship')
+            squaresCompetitor[indexHorizontal].classList.add(i)
+            squaresCompetitor[indexHorizontal].classList.add('ship')
           } 
         } else {
           if (width - shipsObj[i].length > Math.floor(randomNum / width)) {
-            squares[indexVert].classList.add(i)
-            squares[indexVert].classList.add('ship')
+            squaresCompetitor[indexVert].classList.add(i)
+            squaresCompetitor[indexVert].classList.add('ship')
           } 
         }
       })
