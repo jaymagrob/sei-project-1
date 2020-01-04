@@ -144,7 +144,7 @@ function init() {
           squaresPlayer[indexPlayer + 10 * ind].classList.add(playerShipSelected)
         }
       })
-    } 
+    }
   }
   
 
@@ -162,9 +162,22 @@ function init() {
       return a
     },[])
     playerPlaying[playerShipSelected] = shipLocation
-    console.log(playerPlaying)
+    const allLocations = Object.values(playerPlaying).flat()
+    const findDuplicates = new Set(allLocations).size
+    if (allLocations.length !== findDuplicates) shipOnShip(playerShipSelected)
+    if (allLocations.length === 17 && findDuplicates === 17) startGame()
+
   }
-  
+    
+  function shipOnShip(i) {
+    console.log(`${i} can not be placed on other ship. Please reassign`)
+  }
+  //! WORKING HERE!
+  //
+  function startGame() {
+    console.log('start')
+  }
+
   window.addEventListener('keydown', e => {
     if (e.keyCode.toString().match(/32|37|39/)) sideDirection = !sideDirection
     console.log(sideDirection)
