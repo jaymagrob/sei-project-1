@@ -21,6 +21,7 @@ function init() {
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
+  let playersTurn = true
 
   //Game Objects
   const shipsObj = {
@@ -178,6 +179,7 @@ function init() {
   function startGame() {
     console.log('start')
     document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
+    squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
     
   }
 
