@@ -11,41 +11,50 @@ function init() {
   const gridCompetitor = document.querySelector('.grid-competitor')
   const squaresCompetitor = []
   const gridPlayer = document.querySelector('.grid-player')
-  let squaresPlayer = []
+  const squaresPlayer = []
   const selectionPlayer = document.querySelector('.player-selection')
   const squaresSelection = []
+  const btnTest = document.querySelector('button') //THIS IS FOR TESTING FUNCTIONS! Delete before commit
 
   // game variables
   const width = 10
-  let freeSpaceOnBoard = false
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
   let playersTurn = true
 
   //Game Objects
-  const shipsObj = {
-    carrier: ['t','m','m','m','b'],
-    battleship: ['t','m','m','b'],
-    cruiser: ['t','m','b'],
-    submarine: ['t','m','b'],
-    destroyer: ['t','b']
-  }
-
-  const counter = {
-    carrier: 5,
-    battleship: 9,
-    cruiser: 12,
-    submarine: 15,
-    destroyer: 17
-  }
-
-  const playerPlaying = {
-    carrier: [],
-    battleship: [],
-    cruiser: [],
-    submarine: [],
-    destroyer: []
+  const shipObject = {
+    carrier: {
+      ship: ['t','m','m','m','b'],
+      counter: 5,
+      playerPlaying: [],
+      computerPlaying: []
+    },
+    battleship: {
+      ship: ['t','m','m','b'],
+      counter: 9,
+      playerPlaying: [],
+      computerPlaying: []
+    },
+    cruiser: {
+      ship: ['t','m','b'],
+      counter: 12,
+      playerPlaying: [],
+      computerPlaying: []
+    },
+    submarine: {
+      ship: ['t','m','b'],
+      counter: 15,
+      playerPlaying: [],
+      computerPlaying: []
+    },
+    destroyer: {
+      ship: ['t','b'],
+      counter: 17,
+      playerPlaying: [],
+      computerPlaying: []
+    }
   }
 
   //Loop as many times as width times the width to fill the grid
@@ -66,7 +75,7 @@ function init() {
     gridPlayer.appendChild(square)
   })
 
-  Object.keys(shipsObj).forEach(i => {
+  Object.keys(shipObject).forEach(i => {
     const square = document.createElement('div')
     square.classList.add('select-' + i)
     square.classList.add('selector')
@@ -77,12 +86,12 @@ function init() {
   })
 
   //Creating Game
-  Object.keys(shipsObj).forEach(i => {
+  Object.keys(shipObject).forEach(i => {
     complete = false
     console.log(i)
     while (!complete) {
       createLoop(i)
-      if (document.querySelectorAll('.ship').length === counter[i]) {
+      if (document.querySelectorAll('.ship').length === shipObject[i].counter) {
         complete = true
       } else {
         console.log('broke')
@@ -93,22 +102,22 @@ function init() {
       }    
     }    
   })
-
+  //!WOKRING HERE
   function createLoop(i) {
     let countArray = 0
-    while (countArray < shipsObj[i].length) {
+    while (countArray < shipObject[i].ship.length) {
       const randomNum = Math.floor(Math.random() * (width * width))
       const horizontalVert = Math.random() > 0.5
-      shipsObj[i].forEach((item,index) => {
+      shipObject[i].ship.forEach((item,index) => {
         const indexHorizontal = randomNum + index
         const indexVert = randomNum + (10 * index)
         if (!horizontalVert) {
-          if (width - shipsObj[i].length > (randomNum % width)) {
+          if (width - shipObject[i].ship.length > (randomNum % width)) {
             squaresCompetitor[indexHorizontal].classList.add(i)
             squaresCompetitor[indexHorizontal].classList.add('ship')
           } 
         } else {
-          if (width - shipsObj[i].length > Math.floor(randomNum / width)) {
+          if (width - shipObject[i].ship.length > Math.floor(randomNum / width)) {
             squaresCompetitor[indexVert].classList.add(i)
             squaresCompetitor[indexVert].classList.add('ship')
           } 
@@ -126,9 +135,9 @@ function init() {
 
   function hoverTest(i) {
     const indexPlayer = squaresPlayer.indexOf(this)
-    const shipLength = shipsObj[playerShipSelected].length
+    const shipLength = shipObject[playerShipSelected].ship.length
     if (sideDirection && indexPlayer % width + shipLength > width || !sideDirection && indexPlayer > (width * width - 1) - (shipLength * width) + width) {
-      shipsObj[playerShipSelected].forEach((it,ind) => {
+      shipObject[playerShipSelected].ship.forEach((it,ind) => {
         if (sideDirection) {
           if (indexPlayer % width + ind >= width) return
           squaresPlayer[indexPlayer + ind].classList.add('error')
@@ -139,7 +148,7 @@ function init() {
       })
     } else {
       squaresPlayer.forEach(i => i.addEventListener('click',clickOnBoard))
-      shipsObj[playerShipSelected].forEach((it,ind) => {
+      shipObject[playerShipSelected].ship.forEach((it,ind) => {
         if (sideDirection) {
           squaresPlayer[indexPlayer + ind].classList.add(playerShipSelected)
         } else {
@@ -163,8 +172,8 @@ function init() {
       (i.classList.contains(playerShipSelected)) ? a.push(ind) : a
       return a
     },[])
-    playerPlaying[playerShipSelected] = shipLocation
-    const allLocations = Object.values(playerPlaying).flat()
+    shipObject[playerShipSelected].playerPlaying = shipLocation
+    const allLocations = Object.keys(shipObject).reduce((a,i) => a += shipObject[i].playerPlaying + ',','').split(',').map(i => parseInt(i)).filter(i =>  (i))  
     const findDuplicates = new Set(allLocations).size
     if (allLocations.length !== findDuplicates) shipOnShip(playerShipSelected)
     if (allLocations.length === 17 && findDuplicates === 17) startGame()
@@ -174,19 +183,30 @@ function init() {
   function shipOnShip(i) {
     console.log(`${i} can not be placed on other ship. Please reassign`)
   }
-  //! WORKING HERE!
-  //
+  //! START BUTTON
+  
   function startGame() {
     console.log('start')
     document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
     squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
-    
+    playersMoves()
+  }
+
+  function playersMoves() {
+    squaresCompetitor.forEach((i) => i.addEventListener('click', clickCompetitor))
+  }
+
+  function clickCompetitor(e) {
+    console.log(e.target)
+    console.log(squaresCompetitor.indexOf(e.target))
   }
 
   window.addEventListener('keydown', e => {
     if (e.keyCode.toString().match(/32|37|39/)) sideDirection = !sideDirection
     console.log(sideDirection)
   })
+
+  btnTest.addEventListener('click',playersMoves)
   
 }
 
