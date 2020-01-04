@@ -20,6 +20,7 @@ function init() {
   let freeSpaceOnBoard = false
   let complete = false
   let playerShipSelected = ''
+  let sideDirection = true
 
   //Game Objects
   const shipsObj = {
@@ -36,6 +37,14 @@ function init() {
     cruiser: 12,
     submarine: 15,
     destroyer: 17
+  }
+
+  const playerPlaying = {
+    carrier: [],
+    battleship: [],
+    cruiser: [],
+    submarine: [],
+    destroyer: []
   }
 
   //Loop as many times as width times the width to fill the grid
@@ -78,13 +87,9 @@ function init() {
         document.querySelectorAll('.'+i).forEach(it => it.classList.remove(i))
         document.querySelectorAll('.ship').forEach(it => {
           if (it.classList.length <= 2) it.classList.remove('ship')
-        })
-        
-        
-      }
-    
-    }
-    
+        })              
+      }    
+    }    
   })
 
   function createLoop(i) {
@@ -119,22 +124,54 @@ function init() {
 
   function hoverTest(i) {
     const indexPlayer = squaresPlayer.indexOf(this)
-    shipsObj[playerShipSelected].forEach((it,ind) => {
-      squaresPlayer[indexPlayer + ind].classList.add(playerShipSelected)
-    })
-    
-    //i.target.classList.add(playerShipSelected)
-    //console.log(indexPlayer)
-    //console.log(shipsObj[playerShipSelected])
-    
-    
-
-  }
-  function hoverTest2() {
-    squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
+    const shipLength = shipsObj[playerShipSelected].length
+    if (sideDirection && indexPlayer % width + shipLength > width || !sideDirection && indexPlayer > (width * width - 1) - (shipLength * width) + width) {
+      shipsObj[playerShipSelected].forEach((it,ind) => {
+        if (sideDirection) {
+          if (indexPlayer % width + ind >= width) return
+          squaresPlayer[indexPlayer + ind].classList.add('error')
+        } else {
+          if (indexPlayer + 10 * ind >= width * width) return
+          squaresPlayer[indexPlayer + 10 * ind].classList.add('error')
+        }
+      })
+    } else {
+      squaresPlayer.forEach(i => i.addEventListener('click',clickOnBoard))
+      shipsObj[playerShipSelected].forEach((it,ind) => {
+        if (sideDirection) {
+          squaresPlayer[indexPlayer + ind].classList.add(playerShipSelected)
+        } else {
+          squaresPlayer[indexPlayer + 10 * ind].classList.add(playerShipSelected)
+        }
+      })
+    } 
   }
   
+
+  function hoverTest2() {
+    squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
+    squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
+    squaresPlayer.forEach(i => i.classList.remove('error'))
+  }
+
+  function clickOnBoard() {
+    squaresPlayer.forEach(i => i.removeEventListener('mouseenter',hoverTest))
+    squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
+    const shipLocation = squaresPlayer.reduce((a,i,ind) => {
+      (i.classList.contains(playerShipSelected)) ? a.push(ind) : a
+      return a
+    },[])
+    playerPlaying[playerShipSelected] = shipLocation
+    console.log(playerPlaying)
+  }
+  
+  window.addEventListener('keydown', e => {
+    if (e.keyCode.toString().match(/32|37|39/)) sideDirection = !sideDirection
+    console.log(sideDirection)
+  })
   
 }
 
 window.addEventListener('DOMContentLoaded', init)
+
+
