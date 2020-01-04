@@ -68,6 +68,7 @@ function init() {
   Object.keys(shipsObj).forEach(i => {
     const square = document.createElement('div')
     square.classList.add('select-' + i)
+    square.classList.add('selector')
     square.innerHTML = i
     square.addEventListener('click',selectionShips)
     squaresSelection.push(i)
@@ -176,6 +177,8 @@ function init() {
   //
   function startGame() {
     console.log('start')
+    document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
+    
   }
 
   window.addEventListener('keydown', e => {
