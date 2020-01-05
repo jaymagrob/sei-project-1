@@ -197,7 +197,7 @@ function init() {
     squaresCompetitor.forEach((i) => i.addEventListener('click', clickCompetitor))
     
   }
-//! WORKING HERE
+
   function clickCompetitor(e) {
     const clickInd = squaresCompetitor.indexOf(e.target)
     const shipHit = Object.keys(shipObject).reduce((a,i) => (shipObject[i].computerPlaying.indexOf(clickInd) > -1) ? a = i : a,null)
@@ -217,6 +217,32 @@ function init() {
       }
     }
   }
+  //! remove later used for testing
+  for (let i = 0; i < 1000; i++) {
+    competitorsTurn()
+  }
+
+  function competitorsTurn() {
+    let randomNum = Math.floor(Math.random() * ((width * width) / 2)) * 2
+    const modular = Math.floor(randomNum / 10) % 2
+    const modular2 = randomNum % 2
+    randomNum = (modular === modular2) ? randomNum + 1 : randomNum
+    squaresPlayer[randomNum].innerHTML = Math.floor(randomNum / 10) % 2
+    squaresPlayer[randomNum].style.background = 'pink'
+    //! WORKING HERE
+  }
+
+  createPlayerBoard() //DELETE ONCE TESTING IS OVER
+
+
+  //!THIS IS A TEST - REMOVE AFTER TESTING
+  function createPlayerBoard() { 
+    Object.keys(shipObject).forEach(i => shipObject[i].playerPlaying = shipObject[i].computerPlaying)
+    Object.keys(shipObject).forEach(i => {
+      shipObject[i].playerPlaying.forEach(item => squaresPlayer[item].classList.add(i))
+    })
+    
+  }
 
   window.addEventListener('keydown', e => {
     if (e.keyCode.toString().match(/32|37|39/)) sideDirection = !sideDirection
@@ -224,7 +250,7 @@ function init() {
   })
 
   //? Test button, can remove after production
-  btnTest.addEventListener('click',playersMoves)
+  btnTest.addEventListener('click',competitorsTurn)
   
 }
 
