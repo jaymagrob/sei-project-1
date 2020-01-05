@@ -1,12 +1,5 @@
 function init() {
   
-  // Remember colors
-  console.log('%cFive', 'background: red; color: white')
-  console.log('%cFour', 'background: blue; color: white')
-  console.log('%cThree', 'background: green; color: white')
-  console.log('%cThree', 'background: black; color: white')
-  console.log('%cTwo', 'background: orange; color: white')
-  
   // DOM variables
   const gridCompetitor = document.querySelector('.grid-competitor')
   const squaresCompetitor = []
@@ -21,7 +14,7 @@ function init() {
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
-  let playersTurn = true
+  let whosTurn = ''
 
   //Game Objects
   const shipObject = {
@@ -55,6 +48,11 @@ function init() {
       playerPlaying: [],
       computerPlaying: []
     }
+  }
+
+  const gameSelections = {
+    player: [],
+    competitor: []
   }
 
   //Loop as many times as width times the width to fill the grid
@@ -92,6 +90,7 @@ function init() {
     while (!complete) {
       createLoop(i)
       if (document.querySelectorAll('.ship').length === shipObject[i].counter) {
+        squaresCompetitor.forEach((item,ind) => (item.classList.contains(i)) ? shipObject[i].computerPlaying.push(ind) : '')
         complete = true
       } else {
         console.log('broke')
@@ -100,9 +99,9 @@ function init() {
           if (it.classList.length <= 2) it.classList.remove('ship')
         })              
       }    
-    }    
+    }  
   })
-  //!WOKRING HERE
+
   function createLoop(i) {
     let countArray = 0
     while (countArray < shipObject[i].ship.length) {
@@ -192,13 +191,17 @@ function init() {
     playersMoves()
   }
 
+  
+
   function playersMoves() {
     squaresCompetitor.forEach((i) => i.addEventListener('click', clickCompetitor))
+    
   }
-
+//! WORKING HERE
   function clickCompetitor(e) {
-    console.log(e.target)
-    console.log(squaresCompetitor.indexOf(e.target))
+    const clickInd = squaresCompetitor.indexOf(e.target)
+    let shipHit = ''
+      console.log(clickInd)
   }
 
   window.addEventListener('keydown', e => {
@@ -206,6 +209,7 @@ function init() {
     console.log(sideDirection)
   })
 
+  //? Test button, can remove after production
   btnTest.addEventListener('click',playersMoves)
   
 }
