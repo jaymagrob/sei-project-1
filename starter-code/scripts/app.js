@@ -201,7 +201,21 @@ function init() {
   function clickCompetitor(e) {
     const clickInd = squaresCompetitor.indexOf(e.target)
     const shipHit = Object.keys(shipObject).reduce((a,i) => (shipObject[i].computerPlaying.indexOf(clickInd) > -1) ? a = i : a,null)
-    console.log(!!shipHit)
+    if (gameSelections.player.indexOf(clickInd) > -1) {
+      console.log('already hit') // IGNORE ALREADY HIT
+    } else {
+      gameSelections.player.push(clickInd)
+      if (shipHit) {
+        shipObject[shipHit].computerPlaying.splice(shipObject[shipHit].computerPlaying.indexOf(clickInd),1)
+        if (shipObject[shipHit].computerPlaying.length < 1) {
+          console.log(`${shipHit} has sunk`)
+          console.log(shipObject[shipHit].computerPlaying.length)
+          if (Object.keys(shipObject).every(i => (shipObject[i].computerPlaying.length) === 0)) {
+            console.log('All ships destroyed. You win')
+          }        
+        }
+      }
+    }
   }
 
   window.addEventListener('keydown', e => {
