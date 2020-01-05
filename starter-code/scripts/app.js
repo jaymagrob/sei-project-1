@@ -200,8 +200,8 @@ function init() {
 //! WORKING HERE
   function clickCompetitor(e) {
     const clickInd = squaresCompetitor.indexOf(e.target)
-    let shipHit = ''
-      console.log(clickInd)
+    const shipHit = Object.keys(shipObject).reduce((a,i) => (shipObject[i].computerPlaying.indexOf(clickInd) > -1) ? a = i : a,null)
+    console.log(!!shipHit)
   }
 
   window.addEventListener('keydown', e => {
