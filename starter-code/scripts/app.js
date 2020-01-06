@@ -1,13 +1,15 @@
 function init() {
   
   // DOM variables
-  const gridCompetitor = document.querySelector('.grid-competitor')
-  const squaresCompetitor = []
-  const gridPlayer = document.querySelector('.grid-player')
-  const squaresPlayer = []
-  const selectionPlayer = document.querySelector('.player-selection')
-  const squaresSelection = []
-  const btnTest = document.querySelector('button') //THIS IS FOR TESTING FUNCTIONS! Delete before commit
+  const domObj = {
+    gridCompetitor: document.querySelector('.grid-competitor'),
+    squaresCompetitor: [],
+    gridPlayer: document.querySelector('.grid-player'),
+    squaresPlayer: [],
+    selectionPlayer: document.querySelector('.player-selection'),
+    squaresSelection: [],
+    btnTest: document.querySelector('button') //THIS IS FOR TESTING FUNCTIONS! Delete before commit,
+  }
 
   // game variables
   const width = 10
@@ -55,30 +57,39 @@ function init() {
   const gameSelections = {
     player: [],
     competitor: [],
-    competitorLastMoveHit: false,
-    competitorLastMoveSink: false,
-    competitorTheSame: function() {
-      return this.competitorLastMoveHit === this.competitorLastMoveSink
+    chaseMode: false,
+    chaseIndex: '',
+    chaseArray: function() {
+      return [this.chaseIndex + 1, this.chaseIndex - 1, this.chaseIndex + width, this.chaseIndex - width]
+    },
+    removeBoardArray: function() {
+      return this.chaseArray()
+        .filter(i => i > 0)
+        .filter(i => i < width * width)
+        .filter(i => !(i % width === 0 && this.chaseIndex + 1 == i ))
+        .filter(i => !(i % width === 9 && this.chaseIndex - 1 == i))
+        .filter(i => this.competitor.indexOf(i) === -1)
     }
   }
-
-  //Loop as many times as width times the width to fill the grid
   
-  Array(width * width).join('.').split('.').forEach((i,index) => {
-    const square = document.createElement('div')
-    square.classList.add('grid-item-competitor')
-    square.innerHTML = (Math.floor(index / width)) + ' - ' + index
-    squaresCompetitor.push(square)
-    gridCompetitor.appendChild(square)
-  })
+  
 
-  Array(width * width).join('.').split('.').forEach((i,index) => {
-    const square = document.createElement('div')
-    square.classList.add('grid-item-player')
-    square.innerHTML = (Math.floor(index / width)) + ' - ' + index
-    squaresPlayer.push(square)
-    gridPlayer.appendChild(square)
-  })
+  //Function to create to game board. Parameters should receive competitor and player.
+  function mainBoard(type){ 
+    const lower = type.toLowerCase()
+    const title = lower.slice(0,1).toUpperCase() + lower.slice(1)
+    Array(width * width).join('.').split('.').forEach((i,index) => {
+      const square = document.createElement('div')
+      square.classList.add('grid-item-' + lower)
+      square.innerHTML = index % width
+      domObj['squares' + title].push(square)
+      domObj['grid' + title].appendChild(square)
+    })
+
+  }
+  //Calling function to create game board
+  mainBoard('competitor')
+  mainBoard('player')
 
   Object.keys(shipObject).forEach(i => {
     const square = document.createElement('div')
@@ -86,22 +97,22 @@ function init() {
     square.classList.add('selector')
     square.innerHTML = i
     square.addEventListener('click',selectionShips)
-    squaresSelection.push(i)
-    selectionPlayer.appendChild(square)
+    domObj.squaresSelection.push(i)
+    domObj.selectionPlayer.appendChild(square)
   })
 
-  //Creating Game
+  //Creating the ships for the competitor board
   Object.keys(shipObject).forEach(i => {
     complete = false
     console.log(i)
     while (!complete) {
       createLoop(i)
       if (document.querySelectorAll('.ship').length === shipObject[i].counter) {
-        squaresCompetitor.forEach((item,ind) => (item.classList.contains(i)) ? shipObject[i].computerPlaying.push(ind) : '')
+        domObj.squaresCompetitor.forEach((item,ind) => (item.classList.contains(i)) ? shipObject[i].computerPlaying.push(ind) : '')
         complete = true
       } else {
         console.log('broke')
-        document.querySelectorAll('.'+i).forEach(it => it.classList.remove(i))
+        document.querySelectorAll('.' + i).forEach(it => it.classList.remove(i))
         document.querySelectorAll('.ship').forEach(it => {
           if (it.classList.length <= 2) it.classList.remove('ship')
         })              
@@ -109,6 +120,7 @@ function init() {
     }  
   })
 
+  //Function to select each ship for the competitor
   function createLoop(i) {
     let countArray = 0
     while (countArray < shipObject[i].ship.length) {
@@ -119,13 +131,13 @@ function init() {
         const indexVert = randomNum + (10 * index)
         if (!horizontalVert) {
           if (width - shipObject[i].ship.length > (randomNum % width)) {
-            squaresCompetitor[indexHorizontal].classList.add(i)
-            squaresCompetitor[indexHorizontal].classList.add('ship')
+            domObj.squaresCompetitor[indexHorizontal].classList.add(i)
+            domObj.squaresCompetitor[indexHorizontal].classList.add('ship')
           } 
         } else {
           if (width - shipObject[i].ship.length > Math.floor(randomNum / width)) {
-            squaresCompetitor[indexVert].classList.add(i)
-            squaresCompetitor[indexVert].classList.add('ship')
+            domObj.squaresCompetitor[indexVert].classList.add(i)
+            domObj.squaresCompetitor[indexVert].classList.add('ship')
           } 
         }
       })
@@ -133,48 +145,54 @@ function init() {
     }
   }
 
+
+  // Function for user to selectShips. Parameter e is an event. Event triggered by start of game. Function runs when playShipSelected taken.
   function selectionShips(e) {
     playerShipSelected = e.target.innerHTML.toString()
-    squaresPlayer.forEach(i => i.addEventListener('mouseenter',hoverTest))
-    squaresPlayer.forEach(i => i.addEventListener('mouseleave',hoverTest2))
+    domObj.squaresPlayer.forEach(i => i.addEventListener('mouseenter',hoverTest))
+    domObj.squaresPlayer.forEach(i => i.addEventListener('mouseleave',hoverTest2))
   }
 
-  function hoverTest(i) {
-    const indexPlayer = squaresPlayer.indexOf(this)
+
+  // Function for creating the hover effect when selecting ships
+  function hoverTest() {
+    const indexPlayer = domObj.squaresPlayer.indexOf(this)
     const shipLength = shipObject[playerShipSelected].ship.length
     if (sideDirection && indexPlayer % width + shipLength > width || !sideDirection && indexPlayer > (width * width - 1) - (shipLength * width) + width) {
       shipObject[playerShipSelected].ship.forEach((it,ind) => {
         if (sideDirection) {
           if (indexPlayer % width + ind >= width) return
-          squaresPlayer[indexPlayer + ind].classList.add('error')
+          domObj.squaresPlayer[indexPlayer + ind].classList.add('error')
         } else {
           if (indexPlayer + 10 * ind >= width * width) return
-          squaresPlayer[indexPlayer + 10 * ind].classList.add('error')
+          domObj.squaresPlayer[indexPlayer + 10 * ind].classList.add('error')
         }
       })
     } else {
-      squaresPlayer.forEach(i => i.addEventListener('click',clickOnBoard))
+      domObj.squaresPlayer.forEach(i => i.addEventListener('click',clickOnBoard))
       shipObject[playerShipSelected].ship.forEach((it,ind) => {
         if (sideDirection) {
-          squaresPlayer[indexPlayer + ind].classList.add(playerShipSelected)
+          domObj.squaresPlayer[indexPlayer + ind].classList.add(playerShipSelected)
         } else {
-          squaresPlayer[indexPlayer + 10 * ind].classList.add(playerShipSelected)
+          domObj.squaresPlayer[indexPlayer + 10 * ind].classList.add(playerShipSelected)
         }
       })
     }
   }
   
-
+  // Function for removing hover effect when player selects ship.
   function hoverTest2() {
-    squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
-    squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
-    squaresPlayer.forEach(i => i.classList.remove('error'))
+    domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
+    domObj.squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
+    domObj.squaresPlayer.forEach(i => i.classList.remove('error'))
   }
 
+
+  // Function for putting ship on board. //REFACTOR DOWN
   function clickOnBoard() {
-    squaresPlayer.forEach(i => i.removeEventListener('mouseenter',hoverTest))
-    squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
-    const shipLocation = squaresPlayer.reduce((a,i,ind) => {
+    domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseenter',hoverTest))
+    domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
+    const shipLocation = domObj.squaresPlayer.reduce((a,i,ind) => {
       (i.classList.contains(playerShipSelected)) ? a.push(ind) : a
       return a
     },[])
@@ -193,19 +211,19 @@ function init() {
   function startGame() {
     console.log('start')
     document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
-    squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
+    domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
     playersMoves()
   }
 
   
-
+  //Play playing game
   function playersMoves() {
-    squaresCompetitor.forEach((i) => i.addEventListener('click', clickCompetitor))
-    
+    domObj.squaresCompetitor.forEach((i) => i.addEventListener('click', clickCompetitor))
   }
 
+  //Player clicks a competitors grid //REFACTOR AND BREAK UP. REPEATING CODE FOR COMPUTER AND PLAYER
   function clickCompetitor(e) {
-    const clickInd = squaresCompetitor.indexOf(e.target)
+    const clickInd = domObj.squaresCompetitor.indexOf(e.target)
     const shipHit = Object.keys(shipObject).reduce((a,i) => (shipObject[i].computerPlaying.indexOf(clickInd) > -1) ? a = i : a,null)
     if (gameSelections.player.indexOf(clickInd) > -1) {
       console.log('already hit') // IGNORE ALREADY HIT
@@ -224,28 +242,47 @@ function init() {
     }
   }
 
+
+
+  //TIMER FOR COMPETITOR
   const interval = window.setInterval(function(){
     competitorsTurn()
   }, 100)
 
+  function competitorsTurn() {
+    if (gameSelections.chaseMode) {
+      chaseModeFunction()
+    } else {
+      randomNumberCompetitor()
+      
+    }
+  } 
+
+  function chaseModeFunction() {
+    console.log(gameSelections.chaseIndex)
+    console.log(gameSelections.removeBoardArray())
+    console.log(gameSelections.chaseArray())
+    gameSelections.chaseMode = false
+    clearInterval(interval)
+
+  }
 
   function randomNumberCompetitor() {
     randomNumCompetitor1.filter(i => gameSelections.competitor.indexOf(i) !== -1)
-    console.log(randomNumCompetitor1.length)
     if (randomNumCompetitor1.length === 0) {
       if (randomNumCompetitor2.length === 0) {
-      console.log('no more picks')
-      clearInterval(interval)
+        console.log('no more picks')
+        clearInterval(interval)
       } else {
         const selection = randomNumCompetitor2[Math.floor(Math.random() * randomNumCompetitor2.length)]
-      competitorHitShip(selection)
-      squaresPlayer[selection].style.background = 'pink'
-      randomNumCompetitor2.splice(randomNumCompetitor2.indexOf(selection),1)
+        competitorHitShip(selection)
+        domObj.squaresPlayer[selection].style.background = 'pink'
+        randomNumCompetitor2.splice(randomNumCompetitor2.indexOf(selection),1)
       }
     } else {
       const selection = randomNumCompetitor1[Math.floor(Math.random() * randomNumCompetitor1.length)]
       competitorHitShip(selection)
-      squaresPlayer[selection].style.background = 'pink'
+      domObj.squaresPlayer[selection].style.background = 'pink'
       randomNumCompetitor1.splice(randomNumCompetitor1.indexOf(selection),1)
     }
   }
@@ -254,27 +291,32 @@ function init() {
     let shipHit = ''
     Object.keys(shipObject).forEach(i => (shipObject[i].playerPlaying.indexOf(number) !== -1) ? shipHit = i : '')
     if (shipHit.length > 0) {
-      shipObject[shipHit].playerPlaying.splice(shipObject[shipHit].playerPlaying.indexOf(number),1)
+      shipObject[shipHit].playerPlaying.splice(shipObject[shipHit].playerPlaying.indexOf(number),1)      
       competitorSinkShip(shipHit)
-      console.log('hit')
     }
-    
+    if (shipHit) {
+      gameSelections.chaseMode = true
+      gameSelections.chaseIndex = number
+    }
   }
 
   function competitorSinkShip(ship) {
-    if (shipObject[ship].playerPlaying.length === 0) console.log(`${ship} has sunk.`)
-  }
-  
-  function competitorsTurn() {
-    if (gameSelections.competitorTheSame()) {
-      randomNumberCompetitor()
-    } else {
-      console.log(false)
+    if (shipObject[ship].playerPlaying.length === 0) {
+      console.log(`${ship} has sunk.`)
+      gameSelections.chaseMode = false
+      gameSelections.chaseIndex = ''
     }
+    gameWon()
+  }
+
+  function gameWon() {
+    if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
+      console.log('computer wins!')
+      clearInterval(interval)
+    }
+    
   }
     
-  
-    //! WORKING HERE
   
 
   createPlayerBoard() //DELETE ONCE TESTING IS OVER
@@ -284,7 +326,7 @@ function init() {
   function createPlayerBoard() { 
     Object.keys(shipObject).forEach(i => shipObject[i].playerPlaying = shipObject[i].computerPlaying)
     Object.keys(shipObject).forEach(i => {
-      shipObject[i].playerPlaying.forEach(item => squaresPlayer[item].classList.add(i))
+      shipObject[i].playerPlaying.forEach(item => domObj.squaresPlayer[item].classList.add(i))
     })
     
   }
@@ -295,7 +337,7 @@ function init() {
   })
 
   //? Test button, can remove after production
-  btnTest.addEventListener('click',competitorsTurn)
+  domObj.btnTest.addEventListener('click',competitorsTurn)
   
 }
 
