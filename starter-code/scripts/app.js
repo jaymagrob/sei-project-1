@@ -15,6 +15,8 @@ function init() {
   let playerShipSelected = ''
   let sideDirection = true
   let whosTurn = ''
+  let randomNumCompetitor1 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 !== i % 2)
+  let randomNumCompetitor2 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 === i % 2)
 
   //Game Objects
   const shipObject = {
@@ -52,7 +54,12 @@ function init() {
 
   const gameSelections = {
     player: [],
-    competitor: []
+    competitor: [],
+    competitorLastMoveHit: false,
+    competitorLastMoveSink: false,
+    competitorTheSame: function() {
+      return this.competitorLastMoveHit === this.competitorLastMoveSink
+    }
   }
 
   //Loop as many times as width times the width to fill the grid
@@ -217,24 +224,61 @@ function init() {
     }
   }
 
-  window.setInterval(function(){
+  const interval = window.setInterval(function(){
     competitorsTurn()
   }, 100)
 
 
-  
-  function competitorsTurn() {
-    let randomNum = Math.floor(Math.random() * ((width * width) / 2)) * 2
-    const modular = Math.floor(randomNum / 10) % 2
-    const modular2 = randomNum % 2
-    randomNum = (modular === modular2) ? randomNum + 1 : randomNum
-    squaresPlayer[randomNum].innerHTML = Math.floor(randomNum / 10) % 2
-    squaresPlayer[randomNum].style.background = 'pink'
-    //! WORKING HERE
+  function randomNumberCompetitor() {
+    randomNumCompetitor1.filter(i => gameSelections.competitor.indexOf(i) !== -1)
+    console.log(randomNumCompetitor1.length)
+    if (randomNumCompetitor1.length === 0) {
+      if (randomNumCompetitor2.length === 0) {
+      console.log('no more picks')
+      clearInterval(interval)
+      } else {
+        const selection = randomNumCompetitor2[Math.floor(Math.random() * randomNumCompetitor2.length)]
+      competitorHitShip(selection)
+      squaresPlayer[selection].style.background = 'pink'
+      randomNumCompetitor2.splice(randomNumCompetitor2.indexOf(selection),1)
+      }
+    } else {
+      const selection = randomNumCompetitor1[Math.floor(Math.random() * randomNumCompetitor1.length)]
+      competitorHitShip(selection)
+      squaresPlayer[selection].style.background = 'pink'
+      randomNumCompetitor1.splice(randomNumCompetitor1.indexOf(selection),1)
+    }
   }
 
-  createPlayerBoard() //DELETE ONCE TESTING IS OVER
+  function competitorHitShip(number) {
+    let shipHit = ''
+    Object.keys(shipObject).forEach(i => (shipObject[i].playerPlaying.indexOf(number) !== -1) ? shipHit = i : '')
+    if (shipHit.length > 0) {
+      shipObject[shipHit].playerPlaying.splice(shipObject[shipHit].playerPlaying.indexOf(number),1)
+      competitorSinkShip(shipHit)
+      console.log('hit')
+    }
+    
+  }
 
+  function competitorSinkShip(ship) {
+    if (shipObject[ship].playerPlaying.length === 0) console.log(`${ship} has sunk.`)
+  }
+  
+  function competitorsTurn() {
+    if (gameSelections.competitorTheSame()) {
+      randomNumberCompetitor()
+    } else {
+      console.log(false)
+    }
+  }
+    
+  
+    //! WORKING HERE
+  
+
+  createPlayerBoard() //DELETE ONCE TESTING IS OVER
+  
   
   //!THIS IS A TEST - REMOVE AFTER TESTING
   function createPlayerBoard() { 
