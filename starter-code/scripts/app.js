@@ -182,7 +182,6 @@ function init() {
   function shipOnShip(i) {
     console.log(`${i} can not be placed on other ship. Please reassign`)
   }
-  //! START BUTTON
   
   function startGame() {
     console.log('start')
@@ -217,11 +216,13 @@ function init() {
       }
     }
   }
-  //! remove later used for testing
-  for (let i = 0; i < 1000; i++) {
-    competitorsTurn()
-  }
 
+  window.setInterval(function(){
+    competitorsTurn()
+  }, 100)
+
+
+  
   function competitorsTurn() {
     let randomNum = Math.floor(Math.random() * ((width * width) / 2)) * 2
     const modular = Math.floor(randomNum / 10) % 2
@@ -234,7 +235,7 @@ function init() {
 
   createPlayerBoard() //DELETE ONCE TESTING IS OVER
 
-
+  
   //!THIS IS A TEST - REMOVE AFTER TESTING
   function createPlayerBoard() { 
     Object.keys(shipObject).forEach(i => shipObject[i].playerPlaying = shipObject[i].computerPlaying)
