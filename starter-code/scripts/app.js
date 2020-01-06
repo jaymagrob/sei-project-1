@@ -17,8 +17,8 @@ function init() {
   let playerShipSelected = ''
   let sideDirection = true
   let whosTurn = ''
-  let randomNumCompetitor1 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 !== i % 2)
-  let randomNumCompetitor2 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 === i % 2)
+  const randomNumCompetitor1 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 !== i % 2)
+  const randomNumCompetitor2 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 === i % 2)
 
   //Game Objects
   const shipObject = {
@@ -58,6 +58,7 @@ function init() {
     player: [],
     competitor: [],
     chaseMode: false,
+    chaseHits: [],
     chaseIndex: '',
     chaseArray: function() {
       return [this.chaseIndex + 1, this.chaseIndex - 1, this.chaseIndex + width, this.chaseIndex - width]
@@ -66,10 +67,27 @@ function init() {
       return this.chaseArray()
         .filter(i => i > 0)
         .filter(i => i < width * width)
-        .filter(i => !(i % width === 0 && this.chaseIndex + 1 == i ))
-        .filter(i => !(i % width === 9 && this.chaseIndex - 1 == i))
+        .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
+        .filter(i => !(i % width === 9 && this.chaseIndex - 1 === i))
         .filter(i => this.competitor.indexOf(i) === -1)
+        .sort((a,b) => Math.random() - Math.random())
+    },
+    chaseMix: function() {
+      return this.chaseHits[0]
+    },
+    sideOrTop: function() {
+      return (this.chaseHits.length < 2) ? 0 : this.chaseHits[1] - this.chaseHits[0]
+    },
+    longattack: function() {
+      return [Math.max(...this.CaseIndex) + this.sideOrTop(),Math.min(...this.CaseIndex) - this.sideOrTop()]
+        .filter(i => i > 0)
+        .filter(i => i < width * width)
+        .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
+        .filter(i => !(i % width === 9 && this.chaseIndex - 1 === i))
+        .filter(i => this.competitor.indexOf(i) === -1)
+        .sort((a,b) => Math.random() - Math.random())[0]
     }
+    
   }
   
   
@@ -244,10 +262,10 @@ function init() {
 
 
 
-  //TIMER FOR COMPETITOR
-  const interval = window.setInterval(function(){
-    competitorsTurn()
-  }, 100)
+  // //TIMER FOR COMPETITOR
+  // const interval = window.setInterval(function(){
+  //   competitorsTurn()
+  // }, 100)
 
   function competitorsTurn() {
     if (gameSelections.chaseMode) {
@@ -259,32 +277,33 @@ function init() {
   } 
 
   function chaseModeFunction() {
-    console.log(gameSelections.chaseIndex)
-    console.log(gameSelections.removeBoardArray())
-    console.log(gameSelections.chaseArray())
-    gameSelections.chaseMode = false
-    clearInterval(interval)
-
+    console.log(gameSelections)
   }
+    
+
+  
 
   function randomNumberCompetitor() {
     randomNumCompetitor1.filter(i => gameSelections.competitor.indexOf(i) !== -1)
     if (randomNumCompetitor1.length === 0) {
       if (randomNumCompetitor2.length === 0) {
         console.log('no more picks')
-        clearInterval(interval)
+        
       } else {
         const selection = randomNumCompetitor2[Math.floor(Math.random() * randomNumCompetitor2.length)]
         competitorHitShip(selection)
         domObj.squaresPlayer[selection].style.background = 'pink'
         randomNumCompetitor2.splice(randomNumCompetitor2.indexOf(selection),1)
+        gameSelections.competitor.push(selection)
       }
     } else {
       const selection = randomNumCompetitor1[Math.floor(Math.random() * randomNumCompetitor1.length)]
       competitorHitShip(selection)
       domObj.squaresPlayer[selection].style.background = 'pink'
       randomNumCompetitor1.splice(randomNumCompetitor1.indexOf(selection),1)
+      gameSelections.competitor.push(selection)
     }
+    console.log(gameSelections.competitor)
   }
 
   function competitorHitShip(number) {
@@ -297,6 +316,7 @@ function init() {
     if (shipHit) {
       gameSelections.chaseMode = true
       gameSelections.chaseIndex = number
+      gameSelections.chaseHits.push(number)
     }
   }
 
@@ -312,7 +332,7 @@ function init() {
   function gameWon() {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
-      clearInterval(interval)
+      
     }
     
   }
