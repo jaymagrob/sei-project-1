@@ -14,7 +14,7 @@ function init() {
   
 
   // game variables
-  const width = 10
+  const width = 12
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
@@ -28,31 +28,36 @@ function init() {
       ship: ['t','m','m','m','b'],
       counter: 5,
       playerPlaying: [],
-      computerPlaying: []
+      computerPlaying: [],
+      computerBorder: []
     },
     battleship: {
       ship: ['t','m','m','b'],
       counter: 9,
       playerPlaying: [],
-      computerPlaying: []
+      computerPlaying: [],
+      computerBorder: []
     },
     cruiser: {
       ship: ['t','m','b'],
       counter: 12,
       playerPlaying: [],
-      computerPlaying: []
+      computerPlaying: [],
+      computerBorder: []
     },
     submarine: {
       ship: ['t','m','b'],
       counter: 15,
       playerPlaying: [],
-      computerPlaying: []
+      computerPlaying: [],
+      computerBorder: []
     },
     destroyer: {
       ship: ['t','b'],
       counter: 17,
       playerPlaying: [],
-      computerPlaying: []
+      computerPlaying: [],
+      computerBorder: []
     }
   }
 
@@ -70,7 +75,7 @@ function init() {
         .filter(i => i >= 0)
         .filter(i => i < width * width)
         .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
-        .filter(i => !(i % width === 9 && this.chaseIndex - 1 === i))
+        .filter(i => !(i % width === width - 1 && this.chaseIndex - 1 === i))
         .filter(i => this.competitor.indexOf(i) === -1)
         .sort((a,b) => Math.random() - Math.random())[0]
     },
@@ -87,7 +92,7 @@ function init() {
         .filter(i => i >= 0)
         .filter(i => i < width * width)
         .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
-        .filter(i => !(i % width === 9 && this.chaseIndex - 1 === i))
+        .filter(i => !(i % width === width - 1 && this.chaseIndex - 1 === i))
         .filter(i => this.competitor.indexOf(i) === -1)
         .sort((a,b) => Math.random() - Math.random())[0]
     }
@@ -121,7 +126,10 @@ function init() {
         createLoop(i)
         if (document.querySelectorAll('.ship').length === shipObject[i].counter) {
           domObj.squaresCompetitor.forEach((item,ind) => (item.classList.contains(i)) ? shipObject[i].computerPlaying.push(ind) : '')
+          shipObject[i].computerPlaying.forEach(item => shipObject[i].computerBorder.push(item + 1,item - 1,item + width,item - width))
+          borderReduce(i).forEach(i => domObj.squaresCompetitor[i].classList.add('border'))
           complete = true
+          
         } else {
           console.log('broke')
           document.querySelectorAll('.' + i).forEach(it => it.classList.remove(i))
@@ -131,6 +139,15 @@ function init() {
         }    
       }  
     })
+
+    function borderReduce(shipIndex) {
+      return shipObject[shipIndex].computerBorder
+        .filter(i => i >= 0)
+        .filter(i => i < width * width)
+        .filter(i => shipObject[shipIndex].computerPlaying.indexOf(i) === -1)
+        .filter(i => !(i % width === 0 && shipObject[shipIndex].computerPlaying.some(it => it + 1 === i )))
+        .filter(i => !(i % width === width - 1 && shipObject[shipIndex].computerPlaying.some(it => it - 1 === i )))
+    }
 
     //Function to select each ship for the competitor
     function createLoop(i) {
@@ -245,14 +262,9 @@ function init() {
 
   }
 
-
- 
   function shipOnShip(i) {
     console.log(`${i} can not be placed on other ship. Please reassign`)
-  }
-  
-
-
+  }  
   
   //Play playing game
   function playersMoves() {
@@ -373,7 +385,7 @@ function init() {
 
   //? Test button, can remove after production
   domObj.btnTest.addEventListener('click',competitorsTurn)
-  var interval = setInterval(competitorsTurn,100)
+  //var interval = setInterval(competitorsTurn,100)
   
 }
 
