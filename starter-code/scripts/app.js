@@ -58,8 +58,8 @@ function init() {
     player: [],
     competitor: [],
     chaseMode: false,
-    chaseHits: [],
     chaseIndex: '',
+    chaseHits: [],
     chaseArray: function() {
       return [this.chaseIndex + 1, this.chaseIndex - 1, this.chaseIndex + width, this.chaseIndex - width]
     },
@@ -70,11 +70,9 @@ function init() {
         .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
         .filter(i => !(i % width === 9 && this.chaseIndex - 1 === i))
         .filter(i => this.competitor.indexOf(i) === -1)
-        .sort((a,b) => Math.random() - Math.random())
+        .sort((a,b) => Math.random() - Math.random())[0]
     },
-    chaseMix: function() {
-      return this.chaseHits[0]
-    },
+
     sideOrTop: function() {
       return (this.chaseHits.length < 2) ? 0 : this.chaseHits[1] - this.chaseHits[0]
     },
@@ -99,7 +97,7 @@ function init() {
     Array(width * width).join('.').split('.').forEach((i,index) => {
       const square = document.createElement('div')
       square.classList.add('grid-item-' + lower)
-      square.innerHTML = index % width
+      square.innerHTML = index % width + '\n' + index
       domObj['squares' + title].push(square)
       domObj['grid' + title].appendChild(square)
     })
@@ -277,7 +275,14 @@ function init() {
   } 
 
   function chaseModeFunction() {
-    console.log(gameSelections)
+    const selection = gameSelections.removeBoardArray()
+    competitorHitShip(selection)
+    domObj.squaresPlayer[selection].style.background = 'pink'
+    gameSelections.competitor.push(selection)
+    console.log(gameSelections.chaseHits)
+    console.log(gameSelections.removeBoardArray())
+
+
   }
     
 
