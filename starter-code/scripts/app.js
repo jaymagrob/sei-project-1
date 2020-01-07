@@ -11,14 +11,16 @@ function init() {
     btnTest: document.querySelector('button') //THIS IS FOR TESTING FUNCTIONS! Delete before commit,
   }
 
+  
+
   // game variables
   const width = 10
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
   let whosTurn = ''
-  const randomNumCompetitor1 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 !== i % 2)
-  const randomNumCompetitor2 = new Array(10 * 10).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / 10) % 2 === i % 2)
+  const randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2)
+  const randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2)
 
   //Game Objects
   const shipObject = {
@@ -60,9 +62,6 @@ function init() {
     chaseMode: false,
     chaseIndex: '',
     chaseHits: [],
-    competitorLog: {
-      
-    }
     chaseArray: function() {
       return [this.chaseIndex + 1, this.chaseIndex - 1, this.chaseIndex + width, this.chaseIndex - width]
     },
@@ -114,6 +113,7 @@ function init() {
   mainBoard('competitor')
   mainBoard('player')
 
+
   Object.keys(shipObject).forEach(i => {
     const square = document.createElement('div')
     square.classList.add('select-' + i)
@@ -127,7 +127,6 @@ function init() {
   //Creating the ships for the competitor board
   Object.keys(shipObject).forEach(i => {
     complete = false
-    console.log(i)
     while (!complete) {
       createLoop(i)
       if (document.querySelectorAll('.ship').length === shipObject[i].counter) {
@@ -151,7 +150,7 @@ function init() {
       const horizontalVert = Math.random() > 0.5
       shipObject[i].ship.forEach((item,index) => {
         const indexHorizontal = randomNum + index
-        const indexVert = randomNum + (10 * index)
+        const indexVert = randomNum + (width * index)
         if (!horizontalVert) {
           if (width - shipObject[i].ship.length > (randomNum % width)) {
             domObj.squaresCompetitor[indexHorizontal].classList.add(i)
@@ -187,8 +186,8 @@ function init() {
           if (indexPlayer % width + ind >= width) return
           domObj.squaresPlayer[indexPlayer + ind].classList.add('error')
         } else {
-          if (indexPlayer + 10 * ind >= width * width) return
-          domObj.squaresPlayer[indexPlayer + 10 * ind].classList.add('error')
+          if (indexPlayer + width * ind >= width * width) return
+          domObj.squaresPlayer[indexPlayer + width * ind].classList.add('error')
         }
       })
     } else {
@@ -197,7 +196,7 @@ function init() {
         if (sideDirection) {
           domObj.squaresPlayer[indexPlayer + ind].classList.add(playerShipSelected)
         } else {
-          domObj.squaresPlayer[indexPlayer + 10 * ind].classList.add(playerShipSelected)
+          domObj.squaresPlayer[indexPlayer + width * ind].classList.add(playerShipSelected)
         }
       })
     }
@@ -368,7 +367,7 @@ function init() {
 
   //? Test button, can remove after production
   domObj.btnTest.addEventListener('click',competitorsTurn)
-  var interval = setInterval(competitorsTurn,200)
+  var interval = setInterval(competitorsTurn,10)
   
 }
 

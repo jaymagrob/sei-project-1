@@ -1,3 +1,8 @@
+:root {
+  --changeSize: 10%;
+}
+
+
 * {
   box-sizing: border-box;
 }
@@ -23,9 +28,10 @@ div.grid {
 }
 
 div.grid-item-competitor, div.grid-item-player {
-  width: 10%;
-  height: 10%;
+  width: var(--changeSize);
+  height: var(--changeSize);
   border: 1px dashed black;
+  cursor: crosshair;
 }
 
 .hover {
@@ -59,3 +65,4 @@ div.grid-item-competitor, div.grid-item-player {
 .error {
   background-image: linear-gradient(to right, red, yellow);
 }
+
