@@ -60,12 +60,15 @@ function init() {
     chaseMode: false,
     chaseIndex: '',
     chaseHits: [],
+    competitorLog: {
+      
+    }
     chaseArray: function() {
       return [this.chaseIndex + 1, this.chaseIndex - 1, this.chaseIndex + width, this.chaseIndex - width]
     },
     removeBoardArray: function() {
       return this.chaseArray()
-        .filter(i => i > 0)
+        .filter(i => i >= 0)
         .filter(i => i < width * width)
         .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
         .filter(i => !(i % width === 9 && this.chaseIndex - 1 === i))
@@ -73,12 +76,16 @@ function init() {
         .sort((a,b) => Math.random() - Math.random())[0]
     },
 
+    sortArea: function() {
+      return this.chaseHits.sort((a,b) => a - b)
+    },
     sideOrTop: function() {
-      return (this.chaseHits.length < 2) ? 0 : this.chaseHits[1] - this.chaseHits[0]
+      return (this.sortArea().length < 2) ? 0 : this.sortArea()[1] - this.sortArea()[0]
     },
     longattack: function() {
-      return [Math.max(...this.CaseIndex) + this.sideOrTop(),Math.min(...this.CaseIndex) - this.sideOrTop()]
-        .filter(i => i > 0)
+      return [Math.max(...this.chaseHits) + this.sideOrTop(),Math.min(...this.chaseHits) - this.sideOrTop()]
+        .filter(i => typeof i === 'number')
+        .filter(i => i >= 0)
         .filter(i => i < width * width)
         .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
         .filter(i => !(i % width === 9 && this.chaseIndex - 1 === i))
@@ -259,13 +266,8 @@ function init() {
   }
 
 
-
-  // //TIMER FOR COMPETITOR
-  // const interval = window.setInterval(function(){
-  //   competitorsTurn()
-  // }, 100)
-
   function competitorsTurn() {
+    console.log(gameSelections.chaseMode)
     if (gameSelections.chaseMode) {
       chaseModeFunction()
     } else {
@@ -275,15 +277,15 @@ function init() {
   } 
 
   function chaseModeFunction() {
-    const selection = gameSelections.removeBoardArray()
-    competitorHitShip(selection)
+    const selection = (gameSelections.chaseHits.length >= 2) ? gameSelections.longattack() : gameSelections.removeBoardArray()
     domObj.squaresPlayer[selection].style.background = 'pink'
     gameSelections.competitor.push(selection)
-    console.log(gameSelections.chaseHits)
-    console.log(gameSelections.removeBoardArray())
-
-
+    competitorHitShip(selection)
   }
+    
+    
+
+  
     
 
   
@@ -314,14 +316,14 @@ function init() {
   function competitorHitShip(number) {
     let shipHit = ''
     Object.keys(shipObject).forEach(i => (shipObject[i].playerPlaying.indexOf(number) !== -1) ? shipHit = i : '')
-    if (shipHit.length > 0) {
-      shipObject[shipHit].playerPlaying.splice(shipObject[shipHit].playerPlaying.indexOf(number),1)      
-      competitorSinkShip(shipHit)
-    }
     if (shipHit) {
       gameSelections.chaseMode = true
       gameSelections.chaseIndex = number
       gameSelections.chaseHits.push(number)
+    }
+    if (shipHit.length > 0) {
+      shipObject[shipHit].playerPlaying.splice(shipObject[shipHit].playerPlaying.indexOf(number),1)      
+      competitorSinkShip(shipHit)
     }
   }
 
@@ -330,6 +332,8 @@ function init() {
       console.log(`${ship} has sunk.`)
       gameSelections.chaseMode = false
       gameSelections.chaseIndex = ''
+      gameSelections.chaseHits = []
+      console.log(gameSelections.chaseMode)
     }
     gameWon()
   }
@@ -337,6 +341,7 @@ function init() {
   function gameWon() {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
+      clearInterval(interval)
       
     }
     
@@ -363,6 +368,7 @@ function init() {
 
   //? Test button, can remove after production
   domObj.btnTest.addEventListener('click',competitorsTurn)
+  var interval = setInterval(competitorsTurn,200)
   
 }
 
