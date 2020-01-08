@@ -127,7 +127,7 @@ function init() {
           complete = true
           
         } else {
-          console.log('broke')
+          console.log('loop log')
           document.querySelectorAll('.' + i).forEach(it => it.classList.remove(i))
           document.querySelectorAll('.ship').forEach(it => {
             if (it.classList.length <= 2) it.classList.remove('ship')
@@ -422,30 +422,6 @@ function init() {
     
   }
     
-  
-
-  //createPlayerBoard() //DELETE ONCE TESTING IS OVER
-  
-  
-  //!THIS IS A TEST - REMOVE AFTER TESTING
-  function createPlayerBoard() { 
-    Object.keys(shipObject).forEach(i => shipObject[i].playerPlaying = shipObject[i].computerPlaying)
-    Object.keys(shipObject).forEach(i => {
-      shipObject[i].playerPlaying.forEach(item => domObj.squaresPlayer[item].classList.add(i))
-    })
-    
-  }
-
-
-
-  //? Test button, can remove after production
-  domObj.btnTest.addEventListener('click', reload)
-  //var interval = setInterval(competitorsTurn,50)
-  function reload() {
-    location.reload(true)
-  }
-  console.log(shipObject)
 }
 
 window.addEventListener('DOMContentLoaded', init)
-
