@@ -15,7 +15,7 @@ function init() {
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
-  let whosTurn = ''
+  let whosTurn = 'player'
   const randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
   const randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
 
@@ -108,7 +108,7 @@ function init() {
         domObj['squares' + title].push(square)
         domObj['grid' + title].appendChild(square)
       })
-
+      
     }
     //Calling function to create game board
     mainBoard('competitor')
@@ -169,10 +169,10 @@ function init() {
         countArray = document.querySelectorAll('.' + i).length
       }
     }
+    hoverStuff()
   }
 
-  boardCreated()
-  hoverStuff()
+
 
   function hoverStuff() {
 
@@ -193,6 +193,8 @@ function init() {
     
     function startGame() {
       console.log('start')
+      hoverModeActive = false
+      window.removeEventListener('keydown',changeDirection)
       document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
       playersMoves()
@@ -421,7 +423,11 @@ function init() {
     }
     
   }
-    
+  
+  //CALLING FUNCTIONS!    
+  boardCreated()
+  
+
 }
 
 window.addEventListener('DOMContentLoaded', init)
