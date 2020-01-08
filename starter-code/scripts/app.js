@@ -124,10 +124,10 @@ function init() {
       complete = false
       while (!complete) {
         createLoop(i)
-        if (document.querySelectorAll('.ship').length === shipObject[i].counter) {
+        if (document.querySelectorAll('.ship').length === shipObject[i].counter && document.querySelectorAll('#border.ship').length === 0) {
           domObj.squaresCompetitor.forEach((item,ind) => (item.classList.contains(i)) ? shipObject[i].computerPlaying.push(ind) : '')
           shipObject[i].computerPlaying.forEach(item => shipObject[i].computerBorder.push(item + 1,item - 1,item + width,item - width))
-          borderReduce(i).forEach(i => domObj.squaresCompetitor[i].classList.add('border'))
+          borderReduce(i).forEach(i => domObj.squaresCompetitor[i].id = 'border')
           complete = true
           
         } else {
@@ -135,9 +135,9 @@ function init() {
           document.querySelectorAll('.' + i).forEach(it => it.classList.remove(i))
           document.querySelectorAll('.ship').forEach(it => {
             if (it.classList.length <= 2) it.classList.remove('ship')
-          })              
-        }    
-      }  
+          })
+        }  
+      }
     })
 
     function borderReduce(shipIndex) {
@@ -286,6 +286,7 @@ function init() {
           console.log(shipObject[shipHit].computerPlaying.length)
           if (Object.keys(shipObject).every(i => (shipObject[i].computerPlaying.length) === 0)) {
             console.log('All ships destroyed. You win')
+            
           }        
         }
       }
@@ -362,6 +363,7 @@ function init() {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
       clearInterval(interval)
+      reload()
       
     }
     
@@ -384,9 +386,11 @@ function init() {
 
 
   //? Test button, can remove after production
-  domObj.btnTest.addEventListener('click',competitorsTurn)
-  //var interval = setInterval(competitorsTurn,100)
-  
+  domObj.btnTest.addEventListener('click', reload)
+  var interval = setInterval(competitorsTurn,50)
+  function reload() {
+    location.reload(true)
+  }
 }
 
 window.addEventListener('DOMContentLoaded', init)
