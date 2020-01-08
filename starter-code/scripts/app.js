@@ -10,7 +10,6 @@ function init() {
     squaresSelection: [],
     btnTest: document.querySelector('button') //THIS IS FOR TESTING FUNCTIONS! Delete before commit,
   }
-
   // Global game variables
   const width = 12
   let complete = false
@@ -176,6 +175,11 @@ function init() {
   hoverStuff()
 
   function hoverStuff() {
+
+    playerShipSelected = ''
+    let hoverNumber = ''
+    let hoverModeActive = false
+    let shipClicked = ''
     // Function for user to selectShips. Parameter e is an event. Event triggered by start of game. Function runs when playShipSelected taken.
     Object.keys(shipObject).forEach(i => {
       const square = document.createElement('div')
@@ -203,20 +207,28 @@ function init() {
 
     // Function for creating the hover effect when selecting ships
     function hoverTest(e) {
-      window.addEventListener('keydown',(event) => changeDirection(event, e.target))
+      hoverModeActive = true
+      hoverNumber = e.target
+      console.log(hoverNumber)
       hoverMakeBorder(e.target)
       e.target.addEventListener('click',clickOnBoard)
     }
 
-    function changeDirection(ev ,ev2) {
-      if (ev.keyCode.toString().match(/32|37|39/)) {
+    function changeDirection(e) {
+      console.log('a')
+      if (!hoverModeActive) return
+      if (e.keyCode.toString().match(/32|37|39/)) {
         sideDirection = !sideDirection
-        console.log(ev2)
-        hoverTest2(ev2)
-        hoverMakeBorder(ev2)  
+        console.log(sideDirection)
+        console.log
+        domObj.squaresPlayer.forEach(i => i.id = '')
+        domObj.squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
+        domObj.squaresPlayer.forEach(i => i.classList.remove('error'))
+        hoverMakeBorder(hoverNumber)  
       }
-      
     }
+
+    window.addEventListener('keydown',changeDirection)  
 
     function hoverMakeBorder(e) { 
       const indexPlayer = domObj.squaresPlayer.indexOf(e)
@@ -241,23 +253,51 @@ function init() {
           }
         })
       }
+      const shipLocation = domObj.squaresPlayer.reduce((a,i,ind) => {
+        (i.classList.contains(playerShipSelected)) ? a.push(ind) : a
+        return a
+      },[])
+      if (domObj.squaresPlayer.some(i => i.classList.contains('error'))) return
+      shipLocation.forEach((i) =>{
+        if (domObj.squaresPlayer[i].classList.length > 2) domObj.squaresPlayer[i].classList.add('error')
+      })
+      let borderarray = []
+      shipLocation.forEach(i => borderarray.push(i + 1,i - 1,i + width,i - width))
+      console.log(borderarray)
+      borderarray = borderarray
+        .filter(i => typeof i === 'number')
+        .filter(i => i >= 0)
+        .filter(i => i < width * width)
+        .filter(i => shipLocation.indexOf(i) === -1)
+        .filter(i => !(i % width === 0 && shipLocation.some(it => it + 1 === i )))
+        .filter(i => !(i % width === width - 1 && shipLocation.some(it => it - 1 === i )))
+      borderarray.forEach(i => domObj.squaresPlayer[i].id = 'border')
+      console.log((document.querySelectorAll('#border.carrier,#border.battleship,#border.cruiser,#border.submarine,#border.destroyer')))
+      shipLocation.forEach((i) =>{
+        if (document.querySelectorAll('#border.carrier,#border.battleship,#border.cruiser,#border.submarine,#border.destroyer').length > 0)  domObj.squaresPlayer[i].classList.add('error')
+      })
     }
     
+      
+    
+    
     // Function for removing hover effect when player selects ship.
-    function hoverTest2(e) {
-      console.log(e)
+    function hoverTest2() {
+      hoverModeActive = false
       domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
       domObj.squaresPlayer.forEach(i => window.removeEventListener('click',clickOnBoard))
-      domObj.squaresPlayer.forEach(i => i.addEventListener('keydown',changeDirection))
       domObj.squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
       domObj.squaresPlayer.forEach(i => i.classList.remove('error'))
+      domObj.squaresPlayer.forEach(i => i.id = '')
     }
 
+  
 
     // Function for putting ship on board. //REFACTOR DOWN
     function clickOnBoard() {
-      console.log('john')
+      if (domObj.squaresPlayer.some(i => i.classList.contains('error'))) return
       domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseenter',hoverTest))
+      domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('keydown',changeDirection))
       const shipLocation = domObj.squaresPlayer.reduce((a,i,ind) => {
@@ -404,6 +444,7 @@ function init() {
   function reload() {
     location.reload(true)
   }
+  console.log(shipObject)
 }
 
 window.addEventListener('DOMContentLoaded', init)
