@@ -1,6 +1,6 @@
 function init() {
   
-  // DOM variables
+  // Global DOM variables
   const domObj = {
     gridCompetitor: document.querySelector('.grid-competitor'),
     squaresCompetitor: [],
@@ -11,16 +11,14 @@ function init() {
     btnTest: document.querySelector('button') //THIS IS FOR TESTING FUNCTIONS! Delete before commit,
   }
 
-  
-
-  // game variables
+  // Global game variables
   const width = 12
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
   let whosTurn = ''
-  const randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2)
-  const randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2)
+  const randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
+  const randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
 
   //Game Objects
   const shipObject = {
@@ -99,9 +97,8 @@ function init() {
     
   }
   
-  
   function boardCreated() {
-      //Function to create to game board. Parameters should receive competitor and player.
+    //Function to create to game board. Parameters should receive competitor and player.
     function mainBoard(type){ 
       const lower = type.toLowerCase()
       const title = lower.slice(0,1).toUpperCase() + lower.slice(1)
@@ -197,10 +194,6 @@ function init() {
       playersMoves()
     }
     
-    window.addEventListener('keydown', e => {
-      if (e.keyCode.toString().match(/32|37|39/)) sideDirection = !sideDirection
-      console.log(sideDirection)
-    })
     
     function selectionShips(e) {
       playerShipSelected = e.target.innerHTML.toString()
@@ -208,10 +201,25 @@ function init() {
       domObj.squaresPlayer.forEach(i => i.addEventListener('mouseleave',hoverTest2))
     }
 
-
     // Function for creating the hover effect when selecting ships
-    function hoverTest() {
-      const indexPlayer = domObj.squaresPlayer.indexOf(this)
+    function hoverTest(e) {
+      window.addEventListener('keydown',(event) => changeDirection(event, e.target))
+      hoverMakeBorder(e.target)
+      e.target.addEventListener('click',clickOnBoard)
+    }
+
+    function changeDirection(ev ,ev2) {
+      if (ev.keyCode.toString().match(/32|37|39/)) {
+        sideDirection = !sideDirection
+        console.log(ev2)
+        hoverTest2(ev2)
+        hoverMakeBorder(ev2)  
+      }
+      
+    }
+
+    function hoverMakeBorder(e) { 
+      const indexPlayer = domObj.squaresPlayer.indexOf(e)
       const shipLength = shipObject[playerShipSelected].ship.length
       if (sideDirection && indexPlayer % width + shipLength > width || !sideDirection && indexPlayer > (width * width - 1) - (shipLength * width) + width) {
         shipObject[playerShipSelected].ship.forEach((it,ind) => {
@@ -236,8 +244,11 @@ function init() {
     }
     
     // Function for removing hover effect when player selects ship.
-    function hoverTest2() {
+    function hoverTest2(e) {
+      console.log(e)
       domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
+      domObj.squaresPlayer.forEach(i => window.removeEventListener('click',clickOnBoard))
+      domObj.squaresPlayer.forEach(i => i.addEventListener('keydown',changeDirection))
       domObj.squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
       domObj.squaresPlayer.forEach(i => i.classList.remove('error'))
     }
@@ -245,8 +256,10 @@ function init() {
 
     // Function for putting ship on board. //REFACTOR DOWN
     function clickOnBoard() {
+      console.log('john')
       domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseenter',hoverTest))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
+      domObj.squaresPlayer.forEach(i => i.removeEventListener('keydown',changeDirection))
       const shipLocation = domObj.squaresPlayer.reduce((a,i,ind) => {
         (i.classList.contains(playerShipSelected)) ? a.push(ind) : a
         return a
@@ -362,7 +375,7 @@ function init() {
   function gameWon() {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
-      clearInterval(interval)
+      //clearInterval(interval)
       reload()
       
     }
@@ -371,7 +384,7 @@ function init() {
     
   
 
-  createPlayerBoard() //DELETE ONCE TESTING IS OVER
+  //createPlayerBoard() //DELETE ONCE TESTING IS OVER
   
   
   //!THIS IS A TEST - REMOVE AFTER TESTING
@@ -387,7 +400,7 @@ function init() {
 
   //? Test button, can remove after production
   domObj.btnTest.addEventListener('click', reload)
-  var interval = setInterval(competitorsTurn,50)
+  //var interval = setInterval(competitorsTurn,50)
   function reload() {
     location.reload(true)
   }
