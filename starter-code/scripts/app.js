@@ -1,5 +1,4 @@
 function init() {
-  
   // Global DOM variables
   const domObj = {
     gridCompetitor: document.querySelector('.grid-competitor'),
@@ -9,11 +8,15 @@ function init() {
     selectionPlayer: document.querySelector('.player-selection'),
     squaresSelection: [],
     btnTest: document.querySelector('button'), //THIS IS FOR TESTING FUNCTIONS! Delete before commit,
-    formStart: document.querySelector('#startGameMenu')
-
+    formStart: document.querySelector('#startGameMenu'),
+    mainGrids: document.querySelectorAll('.grid'),
+    root: document.documentElement,
+    color: document.querySelectorAll('input[type=color]')
   }
+
+  console.log(domObj.color)
   // Global game variables
-  const width = 8
+  let width = 8
   let playerName = ''
   let playerCountry = ''
   let music = true
@@ -101,11 +104,8 @@ function init() {
     
   }
   
-  function startGame() {
-    //WORKING HERE
-  }
-  
-  
+
+    
   function boardCreated() {
     //Function to create to game board. Parameters should receive competitor and player.
     function mainBoard(type){ 
@@ -114,7 +114,7 @@ function init() {
       Array(width * width).join('.').split('.').forEach((i,index) => {
         const square = document.createElement('div')
         square.classList.add('grid-item-' + lower)
-        square.innerHTML = index % width + '\n' + index
+        //square.innerHTML = index % width + '\n' + index
         domObj['squares' + title].push(square)
         domObj['grid' + title].appendChild(square)
       })
@@ -202,11 +202,11 @@ function init() {
     })
     
     function startGame() {
-      console.log('start')
       hoverModeActive = false
       window.removeEventListener('keydown',changeDirection)
       document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
+      domObj.squaresPlayer.forEach(i => i.id = '')
       playersMoves()
     }
     
@@ -312,6 +312,7 @@ function init() {
       domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('mouseleave',hoverTest2))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('keydown',changeDirection))
+      hoverModeActive = false
       const shipLocation = domObj.squaresPlayer.reduce((a,i,ind) => {
         (i.classList.contains(playerShipSelected)) ? a.push(ind) : a
         return a
@@ -450,13 +451,32 @@ function init() {
  
   domObj.formStart.addEventListener('submit', e => {
     e.preventDefault()
-    playerName = document.getElementById('name').value
-    playerCountry = document.querySelector('input[name=country]:checked').value
-    domObj.gridCompetitor.innerHTML = ''
+    playerName = e.target.elements[0].value
+    if (e.target.elements[1].checked) playerCountry = 'Scotland'
+    if (e.target.elements[2].checked) playerCountry = 'England'
+    if (e.target.elements[3].checked) playerCountry = 'Australia'
+    if (e.target.elements[4].checked) playerCountry = 'USA'
+    if (e.target.elements[5].checked) width = 8
+    if (e.target.elements[6].checked) width = 10
+    if (e.target.elements[7].checked) width = 12
+    domObj.root.style.setProperty('--changeSize', 100 / width + '%')
+    console.log(playerName, playerCountry, width)
+    hiddenMainGrid()
     boardCreated()
-    
   })
 
+  domObj.color.forEach(i => {
+    i.addEventListener('input', e => {
+      console.log(e.target.name,e.target.value)
+      domObj.root.style.setProperty(`--${e.target.name}`, e.target.value)
+    })
+  })
+  function hiddenMainGrid() {
+    domObj.mainGrids.forEach(i => i.classList.toggle('hidden'))
+    domObj.selectionPlayer.classList.remove('hidden')
+    domObj.gridCompetitor.classList.add('hidden')
+  }
+  
 }
 
 window.addEventListener('DOMContentLoaded', init)
