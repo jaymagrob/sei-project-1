@@ -19,11 +19,11 @@
         <div class="radio-country">
           <input type="radio" id='radio-scotland' name="country" value="Scotland" checked='checked'>
           <label for="radio-scotland">Scotland</label>
-          <input type="radio" id='radio-england' name="country" value="England" checked='checked'>
+          <input type="radio" id='radio-england' name="country" value="England">
           <label for="radio-england">England</label>
-          <input type="radio" id='radio-australia' name="country" value="Australia" checked='checked'>
+          <input type="radio" id='radio-australia' name="country" value="Australia">
           <label for="radio-australia">Australia</label>
-          <input type="radio" id='radio-usa' name="country" value="USA" checked='checked'>
+          <input type="radio" id='radio-usa' name="country" value="USA">
           <label for="radio-usa">USA</label>
         </div>
           
@@ -31,20 +31,32 @@
       <input type='submit' value='Begin Game'></submit>
     </form>
       <form id='soundForm'> 
-        <label for='sound'>Play Sounds</label>
-        <input type="checkbox" name="sound" value="Sound">
+        <input type="checkbox" id='sound' name="sound" value="Sound">
+        <label for='sound' class='soundLabel'>Play Sounds</label>
       </form>
-      <form colorSelector>
-        <input type="color" name="carrier" id="carrier" value='#ff0000'>
-        <label for="carrier">Carrier</label>
-        <input type="color" name="battleship" id="battleship" value='#0000ff'>
-        <label for="battleship">Battleship</label>
-        <input type="color" name="cruiser" id="cruiser" value='#00ff00'>
-        <label for="cruiser">Cruiser</label>
-        <input type="color" name="submarine" id="submarine" value='#ffa500'>
-        <label for="submarine">Submarine</label>
-        <input type="color" name="destroyer" id="destroyer" value='#ffff00'>
-        <label for="destroyer">Destroyer</label>
+      <form class='colorSelector'>
+        <div>
+          <input type="color" name="carrier" id="carrier" value='#ff0000'>
+          <label for="carrier">Carrier</label>
+        </div>
+        <div>
+          <input type="color" name="battleship" id="battleship" value='#0000ff'>
+          <label for="battleship">Battleship</label>
+        </div>
+        <div>
+          <input type="color" name="cruiser" id="cruiser" value='#00ff00'>
+          <label for="cruiser">Cruiser</label>
+        </div>
+        <div>
+          <input type="color" name="submarine" id="submarine" value='#ffa500'>
+          <label for="submarine">Submarine</label>
+        </div>
+        <div>
+          <input type="color" name="destroyer" id="destroyer" value='#ffff00'>
+          <label for="destroyer">Destroyer</label>
+        </div>
+        
+        
       </form>
     </div>
 

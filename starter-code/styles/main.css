@@ -162,3 +162,17 @@ input[type="radio"]:checked + label {
     background-color: #bfb;
     border-color: #4c4;
 }
+
+input[type='checkbox'] + label {
+  color: #ccc;
+  font-style: italic;
+} 
+input[type='checkbox']:checked + .soundLabel {
+  color: #444;
+} 
+
+input[type='checkbox'] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
