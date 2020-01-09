@@ -329,7 +329,7 @@ function init() {
         return a
       },[])
       shipObject[playerShipSelected].playerPlaying = shipLocation
-      const allLocations = Object.keys(shipObject).reduce((a,i) => a += shipObject[i].playerPlaying + ',','').split(',').map(i => parseInt(i)).filter(i =>  (i))  
+      const allLocations = Object.keys(shipObject).reduce((a,i) => a += shipObject[i].playerPlaying + ',','').split(',').map(i => parseInt(i)).filter(i =>  (i || i === 0))  
       const findDuplicates = new Set(allLocations).size
       console.log(allLocations,findDuplicates)
       if (allLocations.length !== findDuplicates) shipOnShip(playerShipSelected)
@@ -383,8 +383,8 @@ function init() {
             domObj.squaresCompetitor[i].classList.add(shipHit)
           })
           if (Object.keys(shipObject).every(i => (shipObject[i].computerPlaying.length) === 0)) {
-            console.log('All ships destroyed. You win')
-            
+            domObj.guide.innerHTML = `Congratulations ${playerName}. You won! Press space to reset`
+            return window.addEventListener('keydown',reset)
           }        
         }
       } else {
@@ -460,10 +460,18 @@ function init() {
   function gameWon() {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
-      
+      domObj.guide.innerHTML = `BOO! Computer Wins. You lost ${playerName}. Press space to reset game`
+      window.addEventListener('keydown', reset)
     }
-    
   }
+  function reset(e) {
+    if (e.keyCode !== 32) return
+    window.removeEventListener('keydown',reset)
+    console.log('reset')
+
+  }
+
+  
  
   domObj.formStart.addEventListener('submit', e => {
     e.preventDefault()
