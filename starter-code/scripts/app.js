@@ -11,7 +11,8 @@ function init() {
     formStart: document.querySelector('#startGameMenu'),
     mainGrids: document.querySelectorAll('.grid'),
     root: document.documentElement,
-    color: document.querySelectorAll('input[type=color]')
+    color: document.querySelectorAll('input[type=color]'),
+    guide: document.querySelector('.guide')
   }
 
   console.log(domObj.color)
@@ -24,8 +25,8 @@ function init() {
   let playerShipSelected = ''
   let sideDirection = true
   let whosTurn = 'player'
-  const randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
-  const randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
+  let randomNumCompetitor1 = null
+  let randomNumCompetitor2 = null
 
   //Game Objects
   const shipObject = {
@@ -207,7 +208,12 @@ function init() {
       document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
       domObj.squaresPlayer.forEach(i => i.id = '')
+      domObj.selectionPlayer.classList.add('hidden')
+      domObj.gridCompetitor.classList.remove('hidden')
+      domObj.guide.innerHTML = `Good luck ${playerName}. ${playerCountry} needs you!`
       playersMoves()
+
+      
     }
     
     
@@ -368,7 +374,7 @@ function init() {
           }        
         }
       } else {
-        console.log('miss')
+        domObj.squaresCompetitor[clickInd].classList.add('miss')
       }
       whosTurn = 'computer'
       competitorsTurn()
@@ -388,7 +394,6 @@ function init() {
 
   function chaseModeFunction() {
     const selection = (gameSelections.chaseHits.length >= 2) ? gameSelections.longattack() : gameSelections.removeBoardArray()
-    domObj.squaresPlayer[selection].style.background = 'pink'
     gameSelections.competitor.push(selection)
     competitorHitShip(selection)
   }
@@ -398,18 +403,15 @@ function init() {
     if (randomNumCompetitor1.length === 0) {
       if (randomNumCompetitor2.length === 0) {
         console.log('no more picks')
-        
       } else {
         const selection = randomNumCompetitor2[Math.floor(Math.random() * randomNumCompetitor2.length)]
         competitorHitShip(selection)
-        domObj.squaresPlayer[selection].style.background = 'pink'
         randomNumCompetitor2.splice(randomNumCompetitor2.indexOf(selection),1)
         gameSelections.competitor.push(selection)
       }
     } else {
       const selection = randomNumCompetitor1[Math.floor(Math.random() * randomNumCompetitor1.length)]
       competitorHitShip(selection)
-      domObj.squaresPlayer[selection].style.background = 'pink'
       randomNumCompetitor1.splice(randomNumCompetitor1.indexOf(selection),1)
       gameSelections.competitor.push(selection)
     }
@@ -420,6 +422,7 @@ function init() {
     let shipHit = ''
     Object.keys(shipObject).forEach(i => (shipObject[i].playerPlaying.indexOf(number) !== -1) ? shipHit = i : '')
     if (shipHit) {
+      domObj.squaresPlayer[number].classList.add('error')
       gameSelections.chaseMode = true
       gameSelections.chaseIndex = number
       gameSelections.chaseHits.push(number)
@@ -427,6 +430,9 @@ function init() {
     if (shipHit.length > 0) {
       shipObject[shipHit].playerPlaying.splice(shipObject[shipHit].playerPlaying.indexOf(number),1)      
       competitorSinkShip(shipHit)
+    }
+    if (!shipHit) {
+      domObj.squaresPlayer[number].classList.add('miss')
     }
   }
 
@@ -452,6 +458,7 @@ function init() {
   domObj.formStart.addEventListener('submit', e => {
     e.preventDefault()
     playerName = e.target.elements[0].value
+    domObj.guide.innerHTML = 'Select your ships onto the board'
     if (e.target.elements[1].checked) playerCountry = 'Scotland'
     if (e.target.elements[2].checked) playerCountry = 'England'
     if (e.target.elements[3].checked) playerCountry = 'Australia'
@@ -461,6 +468,8 @@ function init() {
     if (e.target.elements[7].checked) width = 12
     domObj.root.style.setProperty('--changeSize', 100 / width + '%')
     console.log(playerName, playerCountry, width)
+    randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
+randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
     hiddenMainGrid()
     boardCreated()
   })
@@ -476,7 +485,7 @@ function init() {
     domObj.selectionPlayer.classList.remove('hidden')
     domObj.gridCompetitor.classList.add('hidden')
   }
-  
+  domObj.guide.innerHTML = 'Add your name, country and board size'
 }
 
 window.addEventListener('DOMContentLoaded', init)

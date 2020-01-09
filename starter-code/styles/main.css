@@ -128,12 +128,24 @@ div.grid-item-competitor, div.grid-item-player {
 
 #border {
     background-image: radial-gradient(transparent, transparent 20%, orange 20%, orange 50%, transparent 50%, transparent);
-    background-size: 40px 40px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+
+}
+
+.miss {
+  background-image: radial-gradient(transparent, transparent 20%, aqua 20%, aqua 50%, transparent 50%, transparent);
+  background-size: 40px 40px;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .error {
   background-image: radial-gradient(transparent, transparent 20%, red 20%, red 50%, transparent 50%, transparent);
   background-size: 40px 40px;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .radio-country, .radio-gameSpeed {
@@ -208,6 +220,16 @@ background-color: #dfd;
 div.hidden {
   display: none;
 }
+
+.guide {
+  font-size: 2vw;
+  background-color: #ccc;
+}
+
+
+
+
+
 
 
 
