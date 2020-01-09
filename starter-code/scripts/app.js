@@ -8,10 +8,15 @@ function init() {
     squaresPlayer: [],
     selectionPlayer: document.querySelector('.player-selection'),
     squaresSelection: [],
-    btnTest: document.querySelector('button') //THIS IS FOR TESTING FUNCTIONS! Delete before commit,
+    btnTest: document.querySelector('button'), //THIS IS FOR TESTING FUNCTIONS! Delete before commit,
+    formStart: document.querySelector('#startGameMenu')
+
   }
   // Global game variables
-  const width = 12
+  const width = 8
+  let playerName = ''
+  let playerCountry = ''
+  let music = true
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
@@ -95,6 +100,11 @@ function init() {
     }
     
   }
+  
+  function startGame() {
+    //WORKING HERE
+  }
+  
   
   function boardCreated() {
     //Function to create to game board. Parameters should receive competitor and player.
@@ -324,27 +334,43 @@ function init() {
   //Play playing game
   function playersMoves() {
     domObj.squaresCompetitor.forEach((i) => i.addEventListener('click', clickCompetitor))
+    turnGame('player')
   }
 
+  function turnGame(i) {
+    console.log(`It's ${i}'s turn`)
+  }
+
+  function alreadyHit() {
+    console.log('This has already been hit')
+  }
+  
+  
+  
   //Player clicks a competitors grid //REFACTOR AND BREAK UP. REPEATING CODE FOR COMPUTER AND PLAYER
   function clickCompetitor(e) {
     const clickInd = domObj.squaresCompetitor.indexOf(e.target)
     const shipHit = Object.keys(shipObject).reduce((a,i) => (shipObject[i].computerPlaying.indexOf(clickInd) > -1) ? a = i : a,null)
     if (gameSelections.player.indexOf(clickInd) > -1) {
-      console.log('already hit') // IGNORE ALREADY HIT
+      alreadyHit()
+      return
     } else {
       gameSelections.player.push(clickInd)
       if (shipHit) {
+        console.log('ship hit')
         shipObject[shipHit].computerPlaying.splice(shipObject[shipHit].computerPlaying.indexOf(clickInd),1)
         if (shipObject[shipHit].computerPlaying.length < 1) {
           console.log(`${shipHit} has sunk`)
-          console.log(shipObject[shipHit].computerPlaying.length)
           if (Object.keys(shipObject).every(i => (shipObject[i].computerPlaying.length) === 0)) {
             console.log('All ships destroyed. You win')
             
           }        
         }
+      } else {
+        console.log('miss')
       }
+      whosTurn = 'computer'
+      competitorsTurn()
     }
   }
 
@@ -414,19 +440,22 @@ function init() {
     gameWon()
   }
 
-  function gameWon() {
+  function gameWon(a) {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
-      //clearInterval(interval)
-      reload()
       
     }
     
   }
-  
-  //CALLING FUNCTIONS!    
-  boardCreated()
-  
+ 
+  domObj.formStart.addEventListener('submit', e => {
+    e.preventDefault()
+    playerName = document.getElementById('name').value
+    playerCountry = document.querySelector('input[name=country]:checked').value
+    domObj.gridCompetitor.innerHTML = ''
+    boardCreated()
+    
+  })
 
 }
 

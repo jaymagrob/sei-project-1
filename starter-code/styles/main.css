@@ -1,5 +1,5 @@
 :root {
-  --changeSize: 8.3%;
+  --changeSize: 12.5%;
 }
 
 
@@ -11,12 +11,24 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100vh;
+  font-family: 'Anton', sans-serif;
+  color: #333;
 }
 
-body {
+
+
+main {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+}
+
+header {
+  text-align: center;
+  font-size: 4vw;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
 
 div.grid {
