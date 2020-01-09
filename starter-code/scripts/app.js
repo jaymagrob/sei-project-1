@@ -15,7 +15,6 @@ function init() {
     guide: document.querySelector('.guide')
   }
 
-  console.log(domObj.color)
   // Global game variables
   let width = 8
   let playerName = ''
@@ -34,6 +33,7 @@ function init() {
       counter: 5,
       playerPlaying: [],
       computerPlaying: [],
+      computerLogging: [],
       computerBorder: []
     },
     battleship: {
@@ -41,6 +41,7 @@ function init() {
       counter: 9,
       playerPlaying: [],
       computerPlaying: [],
+      computerLogging: [],
       computerBorder: []
     },
     cruiser: {
@@ -48,6 +49,7 @@ function init() {
       counter: 12,
       playerPlaying: [],
       computerPlaying: [],
+      computerLogging: [],
       computerBorder: []
     },
     submarine: {
@@ -55,6 +57,7 @@ function init() {
       counter: 15,
       playerPlaying: [],
       computerPlaying: [],
+      computerLogging: [],
       computerBorder: []
     },
     destroyer: {
@@ -62,6 +65,7 @@ function init() {
       counter: 17,
       playerPlaying: [],
       computerPlaying: [],
+      computerLogging: [],
       computerBorder: []
     }
   }
@@ -132,18 +136,19 @@ function init() {
         createLoop(i)
         if (document.querySelectorAll('.ship').length === shipObject[i].counter && document.querySelectorAll('#border.ship').length === 0) {
           domObj.squaresCompetitor.forEach((item,ind) => (item.classList.contains(i)) ? shipObject[i].computerPlaying.push(ind) : '')
+          
           shipObject[i].computerPlaying.forEach(item => shipObject[i].computerBorder.push(item + 1,item - 1,item + width,item - width))
           borderReduce(i).forEach(i => domObj.squaresCompetitor[i].id = 'border')
           complete = true
           
         } else {
-          console.log('loop log')
           document.querySelectorAll('.' + i).forEach(it => it.classList.remove(i))
           document.querySelectorAll('.ship').forEach(it => {
             if (it.classList.length <= 2) it.classList.remove('ship')
           })
         }  
       }
+      shipObject[i].computerPlaying.forEach(item => shipObject[i].computerLogging.push(item))
     })
 
     function borderReduce(shipIndex) {
@@ -206,12 +211,20 @@ function init() {
       document.querySelectorAll('.selector').forEach(i => i.removeEventListener('click',selectionShips))
       domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
       domObj.squaresPlayer.forEach(i => i.id = '')
+      cleanCompetitorBoard()
       domObj.selectionPlayer.classList.add('hidden')
       domObj.gridCompetitor.classList.remove('hidden')
       domObj.guide.innerHTML = `Good luck ${playerName}. ${playerCountry} needs you!`
       playersMoves()
 
       
+    }
+
+    function cleanCompetitorBoard() {
+      domObj.squaresCompetitor.forEach(i => {
+        i.className = 'grid-item-competitor'
+        i.id = ''
+      })
     }
     
     
@@ -225,18 +238,14 @@ function init() {
     function hoverTest(e) {
       hoverModeActive = true
       hoverNumber = e.target
-      console.log(hoverNumber)
       hoverMakeBorder(e.target)
       e.target.addEventListener('click',clickOnBoard)
     }
 
     function changeDirection(e) {
-      console.log('a')
       if (!hoverModeActive) return
       if (e.keyCode.toString().match(/32|37|39/)) {
         sideDirection = !sideDirection
-        console.log(sideDirection)
-        console.log
         domObj.squaresPlayer.forEach(i => i.id = '')
         domObj.squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
         domObj.squaresPlayer.forEach(i => i.classList.remove('error'))
@@ -279,7 +288,6 @@ function init() {
       })
       let borderarray = []
       shipLocation.forEach(i => borderarray.push(i + 1,i - 1,i + width,i - width))
-      console.log(borderarray)
       borderarray = borderarray
         .filter(i => typeof i === 'number')
         .filter(i => i >= 0)
@@ -288,7 +296,6 @@ function init() {
         .filter(i => !(i % width === 0 && shipLocation.some(it => it + 1 === i )))
         .filter(i => !(i % width === width - 1 && shipLocation.some(it => it - 1 === i )))
       borderarray.forEach(i => domObj.squaresPlayer[i].id = 'border')
-      console.log((document.querySelectorAll('#border.carrier,#border.battleship,#border.cruiser,#border.submarine,#border.destroyer')))
       shipLocation.forEach((i) =>{
         if (document.querySelectorAll('#border.carrier,#border.battleship,#border.cruiser,#border.submarine,#border.destroyer').length > 0)  domObj.squaresPlayer[i].classList.add('error')
       })
@@ -324,6 +331,7 @@ function init() {
       shipObject[playerShipSelected].playerPlaying = shipLocation
       const allLocations = Object.keys(shipObject).reduce((a,i) => a += shipObject[i].playerPlaying + ',','').split(',').map(i => parseInt(i)).filter(i =>  (i))  
       const findDuplicates = new Set(allLocations).size
+      console.log(allLocations,findDuplicates)
       if (allLocations.length !== findDuplicates) shipOnShip(playerShipSelected)
       if (allLocations.length === 17 && findDuplicates === 17) startGame()
 
@@ -363,9 +371,17 @@ function init() {
       gameSelections.player.push(clickInd)
       if (shipHit) {
         console.log('ship hit')
+        domObj.squaresCompetitor[clickInd].classList.add('error')
         shipObject[shipHit].computerPlaying.splice(shipObject[shipHit].computerPlaying.indexOf(clickInd),1)
+        console.log(shipObject[shipHit])
         if (shipObject[shipHit].computerPlaying.length < 1) {
           console.log(`${shipHit} has sunk`)
+          console.log(shipHit)
+          console.log(shipObject[shipHit].computerLogging, shipObject[shipHit].computerPlaying)
+          shipObject[shipHit].computerLogging.forEach(i => {
+            domObj.squaresCompetitor[i].classList.remove('error')
+            domObj.squaresCompetitor[i].classList.add(shipHit)
+          })
           if (Object.keys(shipObject).every(i => (shipObject[i].computerPlaying.length) === 0)) {
             console.log('All ships destroyed. You win')
             
@@ -380,7 +396,6 @@ function init() {
 
 
   function competitorsTurn() {
-    console.log(gameSelections.chaseMode)
     if (gameSelections.chaseMode) {
       chaseModeFunction()
     } else {
@@ -412,7 +427,6 @@ function init() {
       randomNumCompetitor1.splice(randomNumCompetitor1.indexOf(selection),1)
       gameSelections.competitor.push(selection)
     }
-    console.log(gameSelections.competitor)
   }
 
   function competitorHitShip(number) {
@@ -439,7 +453,6 @@ function init() {
       gameSelections.chaseMode = false
       gameSelections.chaseIndex = ''
       gameSelections.chaseHits = []
-      console.log(gameSelections.chaseMode)
     }
     gameWon()
   }
@@ -464,7 +477,6 @@ function init() {
     if (e.target.elements[6].checked) width = 10
     if (e.target.elements[7].checked) width = 12
     domObj.root.style.setProperty('--changeSize', 100 / width + '%')
-    console.log(playerName, playerCountry, width)
     randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
     randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
     hiddenMainGrid()
@@ -473,7 +485,6 @@ function init() {
 
   domObj.color.forEach(i => {
     i.addEventListener('input', e => {
-      console.log(e.target.name,e.target.value)
       domObj.root.style.setProperty(`--${e.target.name}`, e.target.value)
     })
   })
