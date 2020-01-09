@@ -20,11 +20,10 @@ function init() {
   let width = 8
   let playerName = ''
   let playerCountry = ''
-  let music = true
+  //let music = true --- save for later when there's a sound object
   let complete = false
   let playerShipSelected = ''
   let sideDirection = true
-  let whosTurn = 'player'
   let randomNumCompetitor1 = null
   let randomNumCompetitor2 = null
 
@@ -83,7 +82,7 @@ function init() {
         .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
         .filter(i => !(i % width === width - 1 && this.chaseIndex - 1 === i))
         .filter(i => this.competitor.indexOf(i) === -1)
-        .sort((a,b) => Math.random() - Math.random())[0]
+        .sort(() => Math.random() - Math.random())[0]
     },
 
     sortArea: function() {
@@ -100,7 +99,7 @@ function init() {
         .filter(i => !(i % width === 0 && this.chaseIndex + 1 === i ))
         .filter(i => !(i % width === width - 1 && this.chaseIndex - 1 === i))
         .filter(i => this.competitor.indexOf(i) === -1)
-        .sort((a,b) => Math.random() - Math.random())[0]
+        .sort(() => Math.random() - Math.random())[0]
     }
     
   }
@@ -112,7 +111,7 @@ function init() {
     function mainBoard(type){ 
       const lower = type.toLowerCase()
       const title = lower.slice(0,1).toUpperCase() + lower.slice(1)
-      Array(width * width).join('.').split('.').forEach((i,index) => {
+      Array(width * width).join('.').split('.').forEach(() => {
         const square = document.createElement('div')
         square.classList.add('grid-item-' + lower)
         //square.innerHTML = index % width + '\n' + index
@@ -190,7 +189,6 @@ function init() {
     playerShipSelected = ''
     let hoverNumber = ''
     let hoverModeActive = false
-    let shipClicked = ''
     // Function for user to selectShips. Parameter e is an event. Event triggered by start of game. Function runs when playShipSelected taken.
     Object.keys(shipObject).forEach(i => {
       const square = document.createElement('div')
@@ -303,7 +301,7 @@ function init() {
     function hoverTest2() {
       hoverModeActive = false
       domObj.squaresPlayer.forEach(i => i.removeEventListener('click',clickOnBoard))
-      domObj.squaresPlayer.forEach(i => window.removeEventListener('click',clickOnBoard))
+      domObj.squaresPlayer.forEach(() => window.removeEventListener('click',clickOnBoard))
       domObj.squaresPlayer.forEach(i => i.classList.remove(playerShipSelected))
       domObj.squaresPlayer.forEach(i => i.classList.remove('error'))
       domObj.squaresPlayer.forEach(i => i.id = '')
@@ -376,7 +374,6 @@ function init() {
       } else {
         domObj.squaresCompetitor[clickInd].classList.add('miss')
       }
-      whosTurn = 'computer'
       competitorsTurn()
     }
   }
@@ -447,7 +444,7 @@ function init() {
     gameWon()
   }
 
-  function gameWon(a) {
+  function gameWon() {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
       
@@ -469,7 +466,7 @@ function init() {
     domObj.root.style.setProperty('--changeSize', 100 / width + '%')
     console.log(playerName, playerCountry, width)
     randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
-randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
+    randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
     hiddenMainGrid()
     boardCreated()
   })
