@@ -12,6 +12,42 @@
     <h1>Battleship</h1>
   </header>
   <main>
+    <div class="game-selection grid">
+      <form id='startGameMenu'>
+        <label for="name">Players Name</label>
+        <input type="text" name="name" id="name" pattern='[A-Za-z]{1,8}' title="Max 8 characters, no numbers" required>
+        <div class="radio-country">
+          <input type="radio" id='radio-scotland' name="country" value="Scotland" checked='checked'>
+          <label for="radio-scotland">Scotland</label>
+          <input type="radio" id='radio-england' name="country" value="England" checked='checked'>
+          <label for="radio-england">England</label>
+          <input type="radio" id='radio-australia' name="country" value="Australia" checked='checked'>
+          <label for="radio-australia">Australia</label>
+          <input type="radio" id='radio-usa' name="country" value="USA" checked='checked'>
+          <label for="radio-usa">USA</label>
+        </div>
+          
+      
+      <input type='submit' value='Begin Game'></submit>
+    </form>
+      <form id='soundForm'> 
+        <label for='sound'>Play Sounds</label>
+        <input type="checkbox" name="sound" value="Sound">
+      </form>
+      <form colorSelector>
+        <input type="color" name="carrier" id="carrier" value='#ff0000'>
+        <label for="carrier">Carrier</label>
+        <input type="color" name="battleship" id="battleship" value='#0000ff'>
+        <label for="battleship">Battleship</label>
+        <input type="color" name="cruiser" id="cruiser" value='#00ff00'>
+        <label for="cruiser">Cruiser</label>
+        <input type="color" name="submarine" id="submarine" value='#ffa500'>
+        <label for="submarine">Submarine</label>
+        <input type="color" name="destroyer" id="destroyer" value='#ffff00'>
+        <label for="destroyer">Destroyer</label>
+      </form>
+    </div>
+
     <div class="grid-competitor grid">
     </div>
     <div class="grid-player grid">
