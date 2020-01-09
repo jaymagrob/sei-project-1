@@ -9,19 +9,25 @@
 
 html, body {
   margin: 0;
-  padding: 0;
   height: 100vh;
   font-family: 'Anton', sans-serif;
   color: #333;
+  background-color: #eee;
 }
 
-
+body{
+  display: flex;
+  flex-flow: column nowrap;
+  min-height: 100vh;
+}
 
 main {
+  flex: 1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 header {
@@ -29,6 +35,14 @@ header {
   font-size: 4vw;
   letter-spacing: 3px;
   text-transform: uppercase;
+  background: #ddd;
+  margin: 0 10px 10px 10px;
+  
+}
+
+h1 {
+  padding: 0;
+  margin: 0;
 }
 
 div.grid {
