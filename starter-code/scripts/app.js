@@ -25,7 +25,7 @@ function init() {
   let sideDirection = true
   let randomNumCompetitor1 = null
   let randomNumCompetitor2 = null
-  let gameEnded = false
+  let gameEnd = false
 
   //Game Objects
   const shipObject = {
@@ -384,7 +384,7 @@ function init() {
             domObj.squaresCompetitor[i].classList.add(shipHit)
           })
           if (Object.keys(shipObject).every(i => (shipObject[i].computerPlaying.length) === 0)) {
-            gameEnded = true
+            gameEnd = true
             domObj.guide.innerHTML = `Congratulations ${playerName}. You won! Press space to reset`
             domObj.squaresCompetitor.forEach((i) => i.removeEventListener('click', clickCompetitor))
             return window.addEventListener('keydown',reset)
