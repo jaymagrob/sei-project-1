@@ -496,7 +496,7 @@ function init() {
     gameSelections.chaseMode = false
     gameSelections.chaseIndex = ''
     gameSelections.chaseHits = []
-    gameEnded = false
+    gameEnd = false
     complete = false
     playerShipSelected = ''
     randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
