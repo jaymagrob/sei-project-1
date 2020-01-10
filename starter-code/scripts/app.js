@@ -25,6 +25,7 @@ function init() {
   let sideDirection = true
   let randomNumCompetitor1 = null
   let randomNumCompetitor2 = null
+  let gameEnded = false
 
   //Game Objects
   const shipObject = {
@@ -383,13 +384,16 @@ function init() {
             domObj.squaresCompetitor[i].classList.add(shipHit)
           })
           if (Object.keys(shipObject).every(i => (shipObject[i].computerPlaying.length) === 0)) {
+            gameEnded = true
             domObj.guide.innerHTML = `Congratulations ${playerName}. You won! Press space to reset`
+            domObj.squaresCompetitor.forEach((i) => i.removeEventListener('click', clickCompetitor))
             return window.addEventListener('keydown',reset)
           }        
         }
       } else {
         domObj.squaresCompetitor[clickInd].classList.add('miss')
       }
+      if (gameEnd) return
       competitorsTurn()
     }
   }
@@ -462,15 +466,43 @@ function init() {
       console.log('computer wins!')
       domObj.guide.innerHTML = `BOO! Computer Wins. You lost ${playerName}. Press space to reset game`
       window.addEventListener('keydown', reset)
+      domObj.squaresCompetitor.forEach((i) => i.removeEventListener('click', clickCompetitor))
     }
   }
   function reset(e) {
     if (e.keyCode !== 32) return
     window.removeEventListener('keydown',reset)
-    console.log('reset')
-
+    resetAll()
   }
 
+  function resetAll() {
+    domObj.gridCompetitor.innerHTML = ''
+    domObj.squaresCompetitor = []
+    domObj.gridPlayer.innerHTML = ''
+    domObj.squaresPlayer = []
+    domObj.squaresSelection = []
+    domObj.selectionPlayer.innerHTML = ''
+    domObj.guide.innerHTML = 'Good luck with the new game'
+    gameSelections.player = []
+    gameSelections.competitor = []
+    gameSelections.chaseMode = false
+    gameSelections.chaseIndex = ''
+    gameSelections.chaseHits = []
+    gameEnded = false
+    complete = false
+    playerShipSelected = ''
+    randomNumCompetitor1 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 !== i % 2) //CAN MOVE
+    randomNumCompetitor2 = new Array(width * width).join(',').split(',').map((i,ind) => ind).filter(i => Math.floor(i / width) % 2 === i % 2) //CAN MOVE
+    Object.keys(shipObject).forEach(i => {
+      shipObject[i].computerPlaying = []
+      shipObject[i].computerLogging = []
+      shipObject[i].computerBorder = []
+      shipObject[i].playerPlaying = []
+    })
+    domObj.selectionPlayer.classList.remove('hidden')
+    domObj.gridCompetitor.classList.add('hidden')
+    boardCreated()
+  }
   
  
   domObj.formStart.addEventListener('submit', e => {
