@@ -12,25 +12,7 @@ a {
   text-decoration: none;
 } 
 
-.carrier {
-  background:var(--carrier);
-}
 
-.battleship {
-  background: var(--battleship);
-}
-
-.cruiser {
-  background: var(--cruiser);
-}
-
-.submarine {
-  background: var(--submarine);
-}
-
-.destroyer {
-  background: var(--destroyer);
-}
 
 * {
   box-sizing: border-box;
@@ -119,38 +101,15 @@ div.grid {
   margin: 0 30px;
 }
 
-div.grid-item-competitor, div.grid-item-player {
+.grid-item-competitor, .grid-item-player {
   width: var(--changeSize);
   height: var(--changeSize);
-  border: 1px dashed black;
+  border: 1px solid #aaa;
   cursor: crosshair;
 }
 
 .hover {
   background: grey;
-}
-
-
-#border {
-    background-image: radial-gradient(transparent, transparent 20%, orange 20%, orange 50%, transparent 50%, transparent);
-    background-size: cover;
-    background-repeat: no-repeat;
-    
-
-}
-
-.miss {
-  background-image: radial-gradient(transparent, transparent 20%, aqua 20%, aqua 50%, transparent 50%, transparent);
-  background-size: 40px 40px;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-.error {
-  background-image: radial-gradient(transparent, transparent 20%, red 20%, red 50%, transparent 50%, transparent);
-  background-size: 40px 40px;
-  background-size: cover;
-  background-repeat: no-repeat;
 }
 
 .radio-country, .radio-gameSpeed {
@@ -289,6 +248,52 @@ div[data-position='bottom'] {
   border: 1px solid transparent;
 }
 
+.carrier {
+  background:var(--carrier);
+}
+
+.battleship {
+  background: var(--battleship);
+}
+
+.cruiser {
+  background: var(--cruiser);
+}
+
+.submarine {
+  background: var(--submarine);
+}
+
+.destroyer {
+  background: var(--destroyer);
+}
+
+#border {
+  background-image: radial-gradient(transparent, transparent 20%, orange 20%, orange 50%, transparent 50%, transparent);
+  background-size: cover;
+  background-repeat: no-repeat;
+  
+
+}
+
+.miss {
+background-image: radial-gradient(transparent, transparent 20%, aqua 20%, aqua 50%, transparent 50%, transparent);
+background-size: 40px 40px;
+background-size: cover;
+background-repeat: no-repeat;
+}
+
+.error {
+background-image: radial-gradient(transparent, transparent 20%, red 20%, red 50%, transparent 50%, transparent);
+background-size: 40px 40px;
+background-size: cover;
+background-repeat: no-repeat;
+}
+
+.player-selection * {
+  letter-spacing: 3px;
+  text-transform: uppercase; 
+}
 
 
 
