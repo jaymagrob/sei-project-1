@@ -275,7 +275,19 @@ div.hidden {
   background-color: #ccc;
 }
 
+div[data-direction='vert'] {
+  transform: rotate(90deg);
+}
 
+div[data-position='top'] {
+  border-radius: 50% 0 0 50%;
+  border: 1px solid transparent;
+}
+
+div[data-position='bottom'] {
+  border-radius: 0 50% 50% 0;
+  border: 1px solid transparent;
+}
 
 
 
