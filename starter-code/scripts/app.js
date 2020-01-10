@@ -372,11 +372,13 @@ function init() {
       gameSelections.player.push(clickInd)
       if (shipHit) {
         console.log('ship hit')
+        domObj.guide.innerHTML = `${playerName} has hit a ship`
         domObj.squaresCompetitor[clickInd].classList.add('error')
         shipObject[shipHit].computerPlaying.splice(shipObject[shipHit].computerPlaying.indexOf(clickInd),1)
         console.log(shipObject[shipHit])
         if (shipObject[shipHit].computerPlaying.length < 1) {
           console.log(`${shipHit} has sunk`)
+          domObj.guide.innerHTML = `Congratulates ${playerName}. ${shipHit} sunk!`
           console.log(shipHit)
           console.log(shipObject[shipHit].computerLogging, shipObject[shipHit].computerPlaying)
           shipObject[shipHit].computerLogging.forEach(i => {
@@ -437,6 +439,7 @@ function init() {
     let shipHit = ''
     Object.keys(shipObject).forEach(i => (shipObject[i].playerPlaying.indexOf(number) !== -1) ? shipHit = i : '')
     if (shipHit) {
+      domObj.guide.innerHTML = 'Computer has a hit!'
       domObj.squaresPlayer[number].classList.add('error')
       gameSelections.chaseMode = true
       gameSelections.chaseIndex = number
@@ -445,6 +448,7 @@ function init() {
     if (shipHit.length > 0) {
       shipObject[shipHit].playerPlaying.splice(shipObject[shipHit].playerPlaying.indexOf(number),1)      
       competitorSinkShip(shipHit)
+      
     }
     if (!shipHit) {
       domObj.squaresPlayer[number].classList.add('miss')
@@ -454,6 +458,7 @@ function init() {
   function competitorSinkShip(ship) {
     if (shipObject[ship].playerPlaying.length === 0) {
       console.log(`${ship} has sunk.`)
+      domObj.guide.innerHTML = `Computer has a sunk your ${ship}!`
       gameSelections.chaseMode = false
       gameSelections.chaseIndex = ''
       gameSelections.chaseHits = []
@@ -465,6 +470,9 @@ function init() {
     if (Object.keys(shipObject).every(i => (shipObject[i].playerPlaying.length) === 0)) {
       console.log('computer wins!')
       domObj.guide.innerHTML = `BOO! Computer Wins. You lost ${playerName}. Press space to reset game`
+      Object.keys(shipObject).forEach(i => {
+        shipObject[i].computerLogging.forEach(item => domObj.squaresCompetitor[item].classList.add(i))
+      })
       window.addEventListener('keydown', reset)
       domObj.squaresCompetitor.forEach((i) => i.removeEventListener('click', clickCompetitor))
     }
@@ -508,7 +516,7 @@ function init() {
   domObj.formStart.addEventListener('submit', e => {
     e.preventDefault()
     playerName = e.target.elements[0].value
-    domObj.guide.innerHTML = 'Select your ships onto the board'
+    domObj.guide.innerHTML = 'Select your ships onto the board. Use space to rotate.'
     if (e.target.elements[1].checked) playerCountry = 'Scotland'
     if (e.target.elements[2].checked) playerCountry = 'England'
     if (e.target.elements[3].checked) playerCountry = 'Australia'

@@ -17,8 +17,10 @@
   <main>
     <div class="game-selection grid">
       <form id='startGameMenu'>
-        <label for="name">Players Name</label>
-        <input type="text" name="name" id="name" pattern='[A-Za-z]{1,8}' title="Max 8 characters, no numbers" required>
+        <div class="nameSelection">
+          <label for="name">Player's Name:</label>
+          <input type="text" name="name" id="name" pattern='[A-Za-z]{1,8}' title="Max 8 characters, no numbers" required>
+        </div>
         <div class="radio-country">
           <input type="radio" id='radio-scotland' name="country" value="Scotland" checked='checked'>
           <label for="radio-scotland">Scotland</label>
