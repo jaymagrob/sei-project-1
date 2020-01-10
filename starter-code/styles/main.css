@@ -7,7 +7,10 @@
   --destroyer: #cc44cc;
 }
 
-
+a { 
+  color: inherit; 
+  text-decoration: none;
+} 
 
 .carrier {
   background:var(--carrier);
@@ -99,7 +102,8 @@ footer {
   letter-spacing: 3px;
   text-transform: uppercase;
   background: #ddd;
-  margin: 0
+  margin: 0;
+  padding: 10px 3px
 }
 
 h1 {
