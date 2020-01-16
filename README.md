@@ -1,4 +1,5 @@
-# ![Project Logo](assets/README_GALogo.png) Battleship - General Assembly: Project 1
+# ![Project Logo](assets/README_GALogo.png) 
+Battleship - General Assembly: Project 1
 
 ## Overview
 
