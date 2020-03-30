@@ -24,7 +24,7 @@ Battleship is my browser-based game based on the classic Milton Bradley game.
 
 The game is deployed using GitHub Pages and can be found [here](https://jaymagrob.github.io/sei-project-1/).
 
-## Technology Use
+## Technology Used
 
 * HTML5
 * CSS3
@@ -106,7 +106,7 @@ removeBoardArray: function() {
 * The computer AI works logically and can beat humans.
 * Computer board is randomly generated every time, which was a daunting task on day one.
 * Using CSS variables and root to let the player create their colours.
-Challenges.
+
 
 ### Challenges
 
