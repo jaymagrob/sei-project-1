@@ -7,7 +7,7 @@ Battleship is my browser-based game based on the classic Milton Bradley game.
 
 ## Brief
 
-### Nessessary
+### Necessary
 * The game should be **one player**, with the computer placing its pieces randomly at the start of the game
 * The computer should be able to make random attacks on the player's board
 
@@ -72,15 +72,15 @@ Computer selection was created using a random number generator and a while loop.
 Computer AI was generated using three stages:
 * **random position** to start where the computer didn't have a hit
 * **chase mode** which would be activated once a target had been hit
-* **long attack** method which would be activiated when two hits happened.
+* **long attack** method which would be activated when two hits happened.
 
 #### Random Position 
 
-Random number was generated from an array all all available squares filtering out squares in a chequerboard. As the smallest ship is 2 squares, it was efficent to attack every second square like a chequerboard.
+A random number was generated from an array all available squares filtering out squares in a chequerboard. As the smallest ship is 2 squares, it was efficient to attack every second square like a chequerboard.
 
 #### Chase Mode
 
-Chase mode had two methods within an object for competitor. The first **chaseArray** would generate the 4 squares around the **chaseIndex**. The second method would then filter if any of the options were off the board, on the other side of the board, already played. Sort was then used with two Math.random functions to give the array a random order and pick the first one.
+Chase mode had two methods within an object for the competitor. The first **chaseArray** would generate the 4 squares around the **chaseIndex**. The second method would then filter if any of the options were off the board, on the other side of the board, already played. Sort was then used with two Math.random functions to give the array a random order and pick the first one.
 
 ```JavaScript
 chaseArray: function() {
@@ -110,8 +110,8 @@ removeBoardArray: function() {
 
 ### Challenges
 
-* Working out how to randomly generate a board for the computer was a difficult task that unearthed unforeseen problems that I had not anticipated when pseudocoding out the process. Each item had to have a randomly generated spot, whether it was vertical or horizontal, not go off the board and not touch or overlap with another ship.  The while loop I used to loop until all these conditions are met did work but it’s not best practise to run a while loop that is not guaranteed an end.  
-* The computer AI was broken for a day while I worked out how to fix an unforeseen error. The AI randomly pick a number into a checkerboard pattern. Once it hits something it targets the four squares around it until it hits again and figures the direction of the boat. This system was breaking when two ships were next to one another. The AI would break because it would hit two ships but only think it had hit one and so would get confused when either side of those two hits didn’t contain a ship and no ship was sunk. After a day of testing and with no clear solution I refactored the game logic to mean that no ship could touch another ship in the setup. Although I would have liked to have found a solution, there was a deadline to finish the project and felt it wasn’t an efficent use of my time.
+* Working out how to randomly generate a board for the computer was a difficult task that unearthed unforeseen problems that I had not anticipated when pseudocoding out the process. Each item had to have a randomly generated spot, whether it was vertical or horizontal, not go off the board and not touch or overlap with another ship.  The while loop I used to loop until all these conditions are met did work but it’s not best to practise to run a while loop that is not guaranteed an end.  
+* The computer AI was broken for a day while I worked out how to fix an unforeseen error. The AI randomly pick a number into a checkerboard pattern. Once it hits something it targets the four squares around it until it hits again and figures the direction of the boat. This system was breaking when two ships were next to one another. The AI would break because it would hit two ships but only think it had hit one and so would get confused when either side of those two hits didn’t contain a ship and no ship was sunk. After a day of testing and with no clear solution I refactored the game logic to mean that no ship could touch another ship in the setup. Although I would have liked to have found a solution, there was a deadline to finish the project and felt it wasn’t an efficient use of my time.
 
 ### Future features
 
